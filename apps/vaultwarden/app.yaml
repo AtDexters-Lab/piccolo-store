@@ -1,0 +1,36 @@
+name: vaultwarden
+image: docker.io/vaultwarden/server:latest
+
+inputs:
+  subdomain:
+    type: string
+    label: "Subdomain"
+    description: "The address to access Vaultwarden"
+    default: "vault"
+    required: true
+    validation:
+      regex: "^[a-z0-9-]+$"
+      message: "Only lowercase letters, numbers, and hyphens allowed."
+
+  admin_token:
+    type: password
+    label: "Admin Token"
+    description: "Token for the /admin portal"
+    generate: true
+    required: true
+
+listeners:
+  - name: "{{ .Inputs.subdomain }}"
+    guest_port: 80
+    flow: tcp
+    protocol: http
+
+environment:
+  ADMIN_TOKEN: "{{ .Inputs.admin_token }}"
+  SIGNUPS_ALLOWED: "false"
+
+storage:
+  persistent:
+    data:
+      container: /data
+      size_limit: 5GB

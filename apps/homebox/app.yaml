@@ -1,12 +1,12 @@
-name: redis
-image: docker.io/library/redis:7
+name: homebox
+image: ghcr.io/sysadminsmedia/homebox:latest
 
 inputs:
   subdomain:
     type: string
     label: "Subdomain"
-    description: "The address to access Redis"
-    default: "redis"
+    description: "The address to access Homebox"
+    default: "homebox"
     required: true
     validation:
       regex: "^[a-z0-9-]+$"
@@ -14,11 +14,11 @@ inputs:
 
 listeners:
   - name: "{{ .Inputs.subdomain }}"
-    guest_port: 6379
+    guest_port: 7745
     flow: tcp
-    protocol: raw
+    protocol: http
 storage:
   persistent:
     data:
       container: /data
-      size_limit: 1GB
+      size_limit: 5GB

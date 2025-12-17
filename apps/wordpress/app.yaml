@@ -1,7 +1,19 @@
 name: wordpress
 image: docker.io/library/wordpress:6
+
+inputs:
+  subdomain:
+    type: string
+    label: "Subdomain"
+    description: "The address to access the blog"
+    default: "blog"
+    required: true
+    validation:
+      regex: "^[a-z0-9-]+$"
+      message: "Only lowercase letters, numbers, and hyphens allowed."
+
 listeners:
-  - name: web
+  - name: "{{ .Inputs.subdomain }}"
     guest_port: 80
     flow: tcp
     protocol: http

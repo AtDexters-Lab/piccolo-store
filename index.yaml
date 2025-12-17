@@ -1,19 +1,60 @@
 apps:
-  - name: wordpress
-    description: "WordPress is open source software you can use to create a beautiful website, blog, or app."
-    icon: "https://raw.githubusercontent.com/AtDexters-Lab/piccolo-store/main/apps/wordpress/icon.png"
-    version: "6.4"
-    category: "CMS"
-    compatibility: ">=0.1.0"
-    path: "apps/wordpress/app.yaml"
-    maintainer: "Piccolo Team"
-    tags: ["blog", "php", "sql"]
+  - name: uptime-kuma
+    description: A fancy self-hosted monitoring tool
+    icon: https://raw.githubusercontent.com/louislam/uptime-kuma/master/public/icon.png
+    version: 1.23.13
+    category: Monitoring
+    path: apps/uptime-kuma/app.yaml
+    maintainer: Community
+    tags: [monitoring, dashboard, uptime]
+    source_url: https://github.com/louislam/uptime-kuma
+
+  - name: code-server
+    description: VS Code in the browser
+    icon: https://raw.githubusercontent.com/coder/code-server/main/docs/assets/logo-code-server.png
+    version: 4.96.2
+    category: Development
+    path: apps/code-server/app.yaml
+    maintainer: Coder
+    tags: [ide, vscode, development]
+    source_url: https://github.com/coder/code-server
+
+  - name: vaultwarden
+    description: Unofficial Bitwarden compatible server written in Rust
+    icon: https://raw.githubusercontent.com/dani-garcia/vaultwarden/main/resources/vaultwarden-icon.png
+    version: 1.33.0
+    category: Security
+    path: apps/vaultwarden/app.yaml
+    maintainer: Community
+    tags: [password-manager, security, vault]
+    source_url: https://github.com/dani-garcia/vaultwarden
+
+  - name: homebox
+    description: Inventory and asset management system
+    icon: https://raw.githubusercontent.com/sysadminsmedia/homebox/main/website/static/img/logo.png
+    version: 0.16.0
+    category: Productivity
+    path: apps/homebox/app.yaml
+    maintainer: SysAdminsMedia
+    tags: [inventory, asset-management, home]
+    source_url: https://github.com/sysadminsmedia/homebox
+
   - name: redis
-    description: "Redis is an open source (BSD licensed), in-memory data structure store, used as a database, cache, and message broker."
-    icon: "https://raw.githubusercontent.com/AtDexters-Lab/piccolo-store/main/apps/redis/icon.png"
-    version: "7.2"
-    category: "Database"
-    compatibility: ">=0.1.0"
-    path: "apps/redis/app.yaml"
-    maintainer: "Piccolo Team"
-    tags: ["kv", "cache"]
+    description: In-memory data structure store, used as a database, cache, and message broker
+    icon: https://upload.wikimedia.org/wikipedia/en/thumb/6/6b/Redis_Logo.svg/1200px-Redis_Logo.svg.png
+    version: 7.0
+    category: Database
+    path: apps/redis/app.yaml
+    maintainer: Redis
+    tags: [database, cache, key-value]
+    source_url: https://redis.io
+
+  - name: wordpress
+    description: Web software you can use to create a beautiful website, blog, or app
+    icon: https://s.w.org/style/images/about/WordPress-logotype-wmark.png
+    version: 6.4
+    category: CMS
+    path: apps/wordpress/app.yaml
+    maintainer: WordPress
+    tags: [cms, blog, website]
+    source_url: https://wordpress.org
