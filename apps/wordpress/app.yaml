@@ -1,0 +1,12 @@
+name: wordpress
+image: docker.io/library/wordpress:6
+listeners:
+  - name: web
+    guest_port: 80
+    flow: tcp
+    protocol: http
+storage:
+  persistent:
+    wp-content:
+      container: /var/www/html
+      size_limit: 5GB

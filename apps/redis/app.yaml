@@ -1,0 +1,12 @@
+name: redis
+image: docker.io/library/redis:7
+listeners:
+  - name: redis
+    guest_port: 6379
+    flow: tcp
+    protocol: raw
+storage:
+  persistent:
+    data:
+      container: /data
+      size_limit: 1GB

@@ -1,0 +1,19 @@
+apps:
+  - name: wordpress
+    description: "WordPress is open source software you can use to create a beautiful website, blog, or app."
+    icon: "https://raw.githubusercontent.com/AtDexters-Lab/piccolo-store/main/apps/wordpress/icon.png"
+    version: "6.4"
+    category: "CMS"
+    compatibility: ">=0.1.0"
+    path: "apps/wordpress/app.yaml"
+    maintainer: "Piccolo Team"
+    tags: ["blog", "php", "sql"]
+  - name: redis
+    description: "Redis is an open source (BSD licensed), in-memory data structure store, used as a database, cache, and message broker."
+    icon: "https://raw.githubusercontent.com/AtDexters-Lab/piccolo-store/main/apps/redis/icon.png"
+    version: "7.2"
+    category: "Database"
+    compatibility: ">=0.1.0"
+    path: "apps/redis/app.yaml"
+    maintainer: "Piccolo Team"
+    tags: ["kv", "cache"]
