@@ -37,3 +37,6 @@ storage:
     project:
       container: /home/coder/project
       size_limit: 10GB
+
+x-piccolo:
+  mode: workspace

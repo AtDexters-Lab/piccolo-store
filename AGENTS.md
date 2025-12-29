@@ -8,6 +8,11 @@
 
 When adding an app, keep these aligned: directory name (`apps/<slug>`), `app.yaml` `name`, and the `index.yaml` `name`/`path`.
 
+## App Manifest Specification
+
+- All `apps/<app-slug>/app.yaml` files must conform to the Piccolo app-platform specification: `https://raw.githubusercontent.com/AtDexters-Lab/piccolod/refs/heads/main/docs/app-platform/specification.yaml`.
+- Prefer completeness over minimal manifests: include as many applicable fields/sections from the spec as possible (e.g., inputs, listeners, environment, storage, and relevant metadata), and avoid undocumented keys.
+
 ## Build, Test, and Development Commands
 
 This repo is data-only (YAML), so there’s no build step.
@@ -35,4 +40,3 @@ There’s no automated test suite in this repository. Before opening a PR:
 
 - Commits: short, imperative, and app-focused (examples from history: “Add configuration files for new applications…”, “init … repo”).
 - PRs: include what changed, the app version/image tag, any new inputs/ports/storage, and a source link (release notes or upstream repo).
-

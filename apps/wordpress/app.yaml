@@ -22,3 +22,6 @@ storage:
     wp-content:
       container: /var/www/html
       size_limit: 5GB
+
+x-piccolo:
+  mode: service

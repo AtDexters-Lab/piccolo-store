@@ -22,3 +22,6 @@ storage:
     data:
       container: /data
       size_limit: 1GB
+
+x-piccolo:
+  mode: service

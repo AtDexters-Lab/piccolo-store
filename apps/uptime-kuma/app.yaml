@@ -22,3 +22,6 @@ storage:
     data:
       container: /app/data
       size_limit: 2GB
+
+x-piccolo:
+  mode: service
