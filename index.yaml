@@ -39,6 +39,16 @@ apps:
     tags: [inventory, asset-management, home]
     source_url: https://github.com/sysadminsmedia/homebox
 
+  - name: immich
+    description: High performance self-hosted photo and video management solution
+    icon: https://raw.githubusercontent.com/immich-app/immich/main/docs/static/img/favicon.png
+    version: v2
+    category: Media
+    path: apps/immich/app.yaml
+    maintainer: Community
+    tags: [photos, videos, backup, gallery]
+    source_url: https://github.com/immich-app/immich
+
   - name: redis
     description: In-memory data structure store, used as a database, cache, and message broker
     icon: https://upload.wikimedia.org/wikipedia/en/thumb/6/6b/Redis_Logo.svg/1200px-Redis_Logo.svg.png
@@ -58,3 +68,44 @@ apps:
     maintainer: WordPress
     tags: [cms, blog, website]
     source_url: https://wordpress.org
+
+  # Workspace environments
+  - name: workspace-ubuntu
+    description: Blank Ubuntu 22.04 Linux environment
+    icon: https://assets.ubuntu.com/v1/29985a98-ubuntu-logo32.png
+    version: "22.04"
+    category: Workspace
+    path: apps/workspace-ubuntu/app.yaml
+    maintainer: Piccolo
+    tags: [workspace, linux, ubuntu, blank]
+    source_url: https://hub.docker.com/_/ubuntu
+
+  - name: workspace-nodejs
+    description: Node.js 20 development environment
+    icon: https://nodejs.org/static/images/logo.svg
+    version: "20"
+    category: Workspace
+    path: apps/workspace-nodejs/app.yaml
+    maintainer: Piccolo
+    tags: [workspace, nodejs, javascript, development]
+    source_url: https://hub.docker.com/_/node
+
+  - name: workspace-python
+    description: Python 3.11 development environment
+    icon: https://www.python.org/static/community_logos/python-logo-generic.svg
+    version: "3.11"
+    category: Workspace
+    path: apps/workspace-python/app.yaml
+    maintainer: Piccolo
+    tags: [workspace, python, development]
+    source_url: https://hub.docker.com/_/python
+
+  - name: workspace-nginx
+    description: Nginx web server workspace
+    icon: https://nginx.org/nginx.png
+    version: alpine
+    category: Workspace
+    path: apps/workspace-nginx/app.yaml
+    maintainer: Piccolo
+    tags: [workspace, nginx, web, server]
+    source_url: https://hub.docker.com/_/nginx

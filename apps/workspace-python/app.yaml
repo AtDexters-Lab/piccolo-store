@@ -1,0 +1,19 @@
+name: workspace-python
+image: python:3.11-slim
+type: user
+
+inputs:
+  name:
+    type: string
+    label: Workspace Name
+    description: A unique name for this workspace instance
+    default: python
+    required: true
+    validation:
+      regex: "^[a-z0-9][a-z0-9-]*[a-z0-9]$|^[a-z0-9]$"
+      message: Must be lowercase alphanumeric with optional hyphens
+
+# No listeners - user runs apps and adds ports as needed
+
+x-piccolo:
+  mode: workspace

@@ -1,0 +1,24 @@
+name: workspace-nginx
+image: nginx:alpine
+type: user
+
+inputs:
+  subdomain:
+    type: string
+    label: Subdomain
+    description: The subdomain for accessing this web server
+    default: nginx
+    required: true
+    validation:
+      regex: "^[a-z0-9][a-z0-9-]*[a-z0-9]$|^[a-z0-9]$"
+      message: Must be lowercase alphanumeric with optional hyphens
+
+listeners:
+  - name: "{{ .Inputs.subdomain }}"
+    guest_port: 80
+    flow: tcp
+    protocol: http
+    remote_ports: [80, 443]
+
+x-piccolo:
+  mode: workspace

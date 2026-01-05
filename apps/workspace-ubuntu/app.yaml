@@ -1,0 +1,19 @@
+name: workspace-ubuntu
+image: ubuntu:22.04
+type: user
+
+inputs:
+  name:
+    type: string
+    label: Workspace Name
+    description: A unique name for this workspace instance
+    default: ubuntu
+    required: true
+    validation:
+      regex: "^[a-z0-9][a-z0-9-]*[a-z0-9]$|^[a-z0-9]$"
+      message: Must be lowercase alphanumeric with optional hyphens
+
+# No listeners - blank environment, user adds ports via Edit Listeners as needed
+
+x-piccolo:
+  mode: workspace
