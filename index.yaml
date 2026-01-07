@@ -69,6 +69,16 @@ apps:
     tags: [cms, blog, website]
     source_url: https://wordpress.org
 
+  - name: convertx
+    description: Self-hosted online file converter supporting 1000+ formats
+    icon: https://raw.githubusercontent.com/C4illin/ConvertX/main/src/public/images/icons/icon.svg
+    version: 0.16.1
+    category: Utilities
+    path: apps/convertx/app.yaml
+    maintainer: Community
+    tags: [converter, files, media, documents]
+    source_url: https://github.com/C4illin/ConvertX
+
   # Workspace environments
   - name: workspace-ubuntu
     description: Blank Ubuntu 22.04 Linux environment

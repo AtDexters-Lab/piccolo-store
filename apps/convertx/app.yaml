@@ -1,0 +1,55 @@
+name: convertx
+image: ghcr.io/c4illin/convertx:v0.16.1
+
+inputs:
+  subdomain:
+    type: string
+    label: "Subdomain"
+    description: "The address to access ConvertX (e.g., 'convert' -> convert.your-domain.com)"
+    default: "convert"
+    required: true
+    validation:
+      regex: "^[a-z0-9-]+$"
+      message: "Only lowercase letters, numbers, and hyphens allowed."
+
+  jwt_secret:
+    type: password
+    label: "JWT Secret"
+    description: "Secret key for signing JSON Web Tokens"
+    generate: true
+    required: true
+
+  account_registration:
+    type: string
+    label: "Account Registration"
+    description: "Allow new user registrations"
+    default: "false"
+    required: false
+
+  allow_unauthenticated:
+    type: string
+    label: "Allow Unauthenticated"
+    description: "Allow access without authentication"
+    default: "false"
+    required: false
+
+listeners:
+  - name: "{{ .Inputs.subdomain }}"
+    guest_port: 3000
+    flow: tcp
+    protocol: http
+
+environment:
+  JWT_SECRET: "{{ .Inputs.jwt_secret }}"
+  ACCOUNT_REGISTRATION: "{{ .Inputs.account_registration }}"
+  ALLOW_UNAUTHENTICATED: "{{ .Inputs.allow_unauthenticated }}"
+  HTTP_ALLOWED: "true"
+
+storage:
+  persistent:
+    data:
+      container: /app/data
+      size_limit: 10GB
+
+x-piccolo:
+  mode: service
