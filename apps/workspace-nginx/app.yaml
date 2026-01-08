@@ -1,5 +1,4 @@
 name: workspace-nginx
-image: nginx:alpine
 type: user
 
 inputs:
@@ -12,6 +11,11 @@ inputs:
     validation:
       regex: "^[a-z0-9][a-z0-9-]*[a-z0-9]$|^[a-z0-9]$"
       message: Must be lowercase alphanumeric with optional hyphens
+
+services:
+  main:
+    image: nginx:alpine
+    bind_ports: [80]
 
 listeners:
   - name: "{{ .Inputs.subdomain }}"

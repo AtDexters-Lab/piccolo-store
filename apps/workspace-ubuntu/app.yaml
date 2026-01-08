@@ -1,5 +1,4 @@
 name: workspace-ubuntu
-image: ubuntu:22.04
 type: user
 
 inputs:
@@ -12,6 +11,11 @@ inputs:
     validation:
       regex: "^[a-z0-9][a-z0-9-]*[a-z0-9]$|^[a-z0-9]$"
       message: Must be lowercase alphanumeric with optional hyphens
+
+services:
+  main:
+    image: ubuntu:22.04
+    bind_ports: []
 
 # No listeners - blank environment, user adds ports via Edit Listeners as needed
 

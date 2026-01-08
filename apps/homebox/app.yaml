@@ -1,5 +1,4 @@
 name: homebox
-image: ghcr.io/sysadminsmedia/homebox:latest
 
 inputs:
   subdomain:
@@ -12,16 +11,21 @@ inputs:
       regex: "^[a-z0-9-]+$"
       message: "Only lowercase letters, numbers, and hyphens allowed."
 
+services:
+  main:
+    image: ghcr.io/sysadminsmedia/homebox:latest
+    bind_ports: [7745]
+    storage:
+      persistent:
+        data:
+          container: /data
+          size_limit: 5GB
+
 listeners:
   - name: "{{ .Inputs.subdomain }}"
     guest_port: 7745
     flow: tcp
     protocol: http
-storage:
-  persistent:
-    data:
-      container: /data
-      size_limit: 5GB
 
 x-piccolo:
   mode: service

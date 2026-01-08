@@ -1,5 +1,4 @@
 name: vaultwarden
-image: docker.io/vaultwarden/server:latest
 
 inputs:
   subdomain:
@@ -19,21 +18,24 @@ inputs:
     generate: true
     required: true
 
+services:
+  main:
+    image: docker.io/vaultwarden/server:latest
+    bind_ports: [80]
+    environment:
+      ADMIN_TOKEN: "{{ .Inputs.admin_token }}"
+      SIGNUPS_ALLOWED: "false"
+    storage:
+      persistent:
+        data:
+          container: /data
+          size_limit: 5GB
+
 listeners:
   - name: "{{ .Inputs.subdomain }}"
     guest_port: 80
     flow: tcp
     protocol: http
-
-environment:
-  ADMIN_TOKEN: "{{ .Inputs.admin_token }}"
-  SIGNUPS_ALLOWED: "false"
-
-storage:
-  persistent:
-    data:
-      container: /data
-      size_limit: 5GB
 
 x-piccolo:
   mode: service

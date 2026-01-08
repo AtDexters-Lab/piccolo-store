@@ -1,5 +1,4 @@
 name: uptime-kuma
-image: docker.io/louislam/uptime-kuma:1
 
 inputs:
   subdomain:
@@ -12,16 +11,21 @@ inputs:
       regex: "^[a-z0-9-]+$"
       message: "Only lowercase letters, numbers, and hyphens allowed."
 
+services:
+  main:
+    image: docker.io/louislam/uptime-kuma:1
+    bind_ports: [3001]
+    storage:
+      persistent:
+        data:
+          container: /app/data
+          size_limit: 2GB
+
 listeners:
   - name: "{{ .Inputs.subdomain }}"
     guest_port: 3001
     flow: tcp
     protocol: http
-storage:
-  persistent:
-    data:
-      container: /app/data
-      size_limit: 2GB
 
 x-piccolo:
   mode: service

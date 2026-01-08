@@ -1,5 +1,4 @@
 name: convertx
-image: ghcr.io/c4illin/convertx:v0.16.1
 
 inputs:
   subdomain:
@@ -33,23 +32,26 @@ inputs:
     default: "false"
     required: false
 
+services:
+  main:
+    image: ghcr.io/c4illin/convertx:v0.16.1
+    bind_ports: [3000]
+    environment:
+      JWT_SECRET: "{{ .Inputs.jwt_secret }}"
+      ACCOUNT_REGISTRATION: "{{ .Inputs.account_registration }}"
+      ALLOW_UNAUTHENTICATED: "{{ .Inputs.allow_unauthenticated }}"
+      HTTP_ALLOWED: "true"
+    storage:
+      persistent:
+        data:
+          container: /app/data
+          size_limit: 10GB
+
 listeners:
   - name: "{{ .Inputs.subdomain }}"
     guest_port: 3000
     flow: tcp
     protocol: http
-
-environment:
-  JWT_SECRET: "{{ .Inputs.jwt_secret }}"
-  ACCOUNT_REGISTRATION: "{{ .Inputs.account_registration }}"
-  ALLOW_UNAUTHENTICATED: "{{ .Inputs.allow_unauthenticated }}"
-  HTTP_ALLOWED: "true"
-
-storage:
-  persistent:
-    data:
-      container: /app/data
-      size_limit: 10GB
 
 x-piccolo:
   mode: service

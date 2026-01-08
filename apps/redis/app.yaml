@@ -1,5 +1,4 @@
 name: redis
-image: docker.io/library/redis:7
 
 inputs:
   subdomain:
@@ -12,16 +11,21 @@ inputs:
       regex: "^[a-z0-9-]+$"
       message: "Only lowercase letters, numbers, and hyphens allowed."
 
+services:
+  main:
+    image: docker.io/library/redis:7
+    bind_ports: [6379]
+    storage:
+      persistent:
+        data:
+          container: /data
+          size_limit: 1GB
+
 listeners:
   - name: "{{ .Inputs.subdomain }}"
     guest_port: 6379
     flow: tcp
     protocol: raw
-storage:
-  persistent:
-    data:
-      container: /data
-      size_limit: 1GB
 
 x-piccolo:
   mode: service

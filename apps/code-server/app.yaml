@@ -1,5 +1,4 @@
 name: code-server
-image: docker.io/codercom/code-server:latest
 
 inputs:
   subdomain:
@@ -19,24 +18,27 @@ inputs:
     generate: true
     required: true
 
+services:
+  main:
+    image: docker.io/codercom/code-server:latest
+    bind_ports: [8080]
+    environment:
+      PASSWORD: "{{ .Inputs.password }}"
+      SUDO_PASSWORD: "{{ .Inputs.password }}"
+    storage:
+      persistent:
+        config:
+          container: /home/coder/.config
+          size_limit: 1GB
+        project:
+          container: /home/coder/project
+          size_limit: 10GB
+
 listeners:
   - name: "{{ .Inputs.subdomain }}"
     guest_port: 8080
     flow: tcp
     protocol: http
-
-environment:
-  PASSWORD: "{{ .Inputs.password }}"
-  SUDO_PASSWORD: "{{ .Inputs.password }}"
-
-storage:
-  persistent:
-    config:
-      container: /home/coder/.config
-      size_limit: 1GB
-    project:
-      container: /home/coder/project
-      size_limit: 10GB
 
 x-piccolo:
   mode: workspace
