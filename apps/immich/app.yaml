@@ -19,6 +19,15 @@ inputs:
 
 type: user
 
+auth:
+  strategy: oidc
+  injection:
+    ca_mount_path: "/etc/ssl/certs/piccolo-ca.crt"
+    env:
+      OIDC_ISSUER: "{{ .System.Auth.Issuer }}"
+      OIDC_CLIENT_ID: "{{ .System.Auth.ClientID }}"
+      OIDC_CLIENT_SECRET: "{{ .System.Auth.ClientSecret }}"
+
 listeners:
   - name: "{{ .Inputs.subdomain }}"
     guest_port: 2283
@@ -82,6 +91,9 @@ services:
       # General
       IMMICH_PORT: "2283"
       LOG_LEVEL: "log"
+      
+      # Auth
+      NODE_EXTRA_CA_CERTS: "/etc/ssl/certs/piccolo-ca.crt"
     
     storage:
       persistent:
