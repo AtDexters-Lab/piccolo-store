@@ -49,16 +49,6 @@ apps:
     tags: [photos, videos, backup, gallery]
     source_url: https://github.com/immich-app/immich
 
-  - name: redis
-    description: In-memory data structure store, used as a database, cache, and message broker
-    icon: https://upload.wikimedia.org/wikipedia/en/thumb/6/6b/Redis_Logo.svg/1200px-Redis_Logo.svg.png
-    version: 7.0
-    category: Database
-    path: apps/redis/app.yaml
-    maintainer: Redis
-    tags: [database, cache, key-value]
-    source_url: https://redis.io
-
   - name: wordpress
     description: Web software you can use to create a beautiful website, blog, or app
     icon: https://s.w.org/style/images/about/WordPress-logotype-wmark.png

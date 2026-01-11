@@ -1,17 +1,6 @@
 name: workspace-nodejs
 type: user
 
-inputs:
-  name:
-    type: string
-    label: Workspace Name
-    description: A unique name for this workspace instance
-    default: nodejs
-    required: true
-    validation:
-      regex: "^[a-z0-9][a-z0-9-]*[a-z0-9]$|^[a-z0-9]$"
-      message: Must be lowercase alphanumeric with optional hyphens
-
 services:
   main:
     image: node:20-alpine
