@@ -26,6 +26,17 @@ listeners:
     guest_port: 80
     flow: tcp
     protocol: http
+    auth:
+      rules:
+        - path: "/wp-admin/"
+          type: prefix
+          strategy: protected
+        - path: "/wp-login.php"
+          type: exact
+          strategy: protected
+        - path: "/"
+          type: prefix
+          strategy: public
 
 x-piccolo:
   mode: service

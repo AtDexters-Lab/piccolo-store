@@ -19,21 +19,23 @@ inputs:
 
 type: user
 
-auth:
-  strategy: oidc
-  injection:
-    ca_mount_path: "/etc/ssl/certs/piccolo-ca.crt"
-    env:
-      OIDC_ISSUER: "{{ .System.Auth.Issuer }}"
-      OIDC_CLIENT_ID: "{{ .System.Auth.ClientID }}"
-      OIDC_CLIENT_SECRET: "{{ .System.Auth.ClientSecret }}"
-
 listeners:
   - name: "{{ .Inputs.subdomain }}"
     guest_port: 2283
     flow: tcp
     protocol: http
     remote_ports: [80, 443]
+    auth:
+      rules:
+        - path: "/.well-known/"
+          type: prefix
+          strategy: public
+        - path: "/api/server-info/ping"
+          type: exact
+          strategy: public
+        - path: "/"
+          type: prefix
+          strategy: oidc_passthrough
 
 permissions:
   network:
@@ -72,6 +74,15 @@ services:
     image: ghcr.io/immich-app/immich-server:v2
     bind_ports: [2283]
     after: [database, redis]
+    oidc_client:
+      redirect_uris:
+        - "app.immich:///oauth-callback"
+        - "http://localhost/oauth-callback"
+      ca_mount_path: "/etc/ssl/certs/piccolo-ca.crt"
+      env:
+        IMMICH_OAUTH_ISSUER_URL: "{{ .System.Auth.Issuer }}"
+        IMMICH_OAUTH_CLIENT_ID: "{{ .System.Auth.ClientID }}"
+        IMMICH_OAUTH_CLIENT_SECRET: "{{ .System.Auth.ClientSecret }}"
     environment:
       # Database connection
       DB_HOSTNAME: "127.0.0.1"

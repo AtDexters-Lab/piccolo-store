@@ -26,6 +26,11 @@ listeners:
     guest_port: 3001
     flow: tcp
     protocol: http
+    auth:
+      rules:
+        - path: "/"
+          type: prefix
+          strategy: public
 
 x-piccolo:
   mode: service
