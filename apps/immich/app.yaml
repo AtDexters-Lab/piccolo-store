@@ -75,9 +75,11 @@ services:
     bind_ports: [2283]
     after: [database, redis]
     oidc_client:
+      redirect_uri_paths:
+        - "/auth/login"
+        - "/user-settings"
       redirect_uris:
         - "app.immich:///oauth-callback"
-        - "http://localhost/oauth-callback"
       ca_mount_path: "/etc/ssl/certs/piccolo-ca.crt"
       env:
         IMMICH_OAUTH_ISSUER_URL: "{{ .System.Auth.Issuer }}"
@@ -89,6 +91,7 @@ services:
       DB_USERNAME: "postgres"
       DB_PASSWORD: "{{ .Inputs.postgres_password }}"
       DB_DATABASE_NAME: "immich"
+      # IMMICH_CONFIG_FILE: "/usr/src/app/config.json"
       
       # Redis connection
       REDIS_HOSTNAME: "127.0.0.1"
