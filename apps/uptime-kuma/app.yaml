@@ -1,4 +1,4 @@
-name: uptime-kuma
+name: uptimekuma
 
 inputs:
   subdomain:

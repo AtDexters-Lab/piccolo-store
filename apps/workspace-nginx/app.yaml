@@ -1,4 +1,4 @@
-name: workspace-nginx
+name: wsnginx
 type: user
 
 inputs:
