@@ -1,16 +1,4 @@
-name: codeserver
-
 inputs:
-  subdomain:
-    type: string
-    label: "Subdomain"
-    description: "The address to access Code Server"
-    default: "code"
-    required: true
-    validation:
-      regex: "^[a-z0-9-]+$"
-      message: "Only lowercase letters, numbers, and hyphens allowed."
-
   password:
     type: password
     label: "Access Password"
@@ -35,7 +23,7 @@ services:
           size_limit: 10GB
 
 listeners:
-  - name: "{{ .Inputs.subdomain }}"
+  - name: __primary
     guest_port: 8080
     flow: tcp
     protocol: http

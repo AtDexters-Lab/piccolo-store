@@ -1,16 +1,4 @@
-name: immich
-
 inputs:
-  subdomain:
-    type: string
-    label: "Subdomain"
-    description: "The address to access Immich (e.g., 'photos' -> photos.domain.tld)"
-    default: "photos"
-    required: true
-    validation:
-      regex: "^[a-z0-9-]+$"
-      message: "Only lowercase letters, numbers, and hyphens allowed."
-
   postgres_password:
     type: password
     label: "Database Password"
@@ -20,7 +8,7 @@ inputs:
 type: user
 
 listeners:
-  - name: "{{ .Inputs.subdomain }}"
+  - name: __primary
     guest_port: 2283
     flow: tcp
     protocol: http
@@ -51,7 +39,7 @@ permissions:
 healthcheck:
   http:
     path: /api/server-info/ping
-    port: "{{ .Inputs.subdomain }}"
+    port: "{{ .Inputs.__app_address__ }}"
     timeout: 10s
     retries: 5
 

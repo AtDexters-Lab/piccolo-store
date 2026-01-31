@@ -1,16 +1,4 @@
-name: convertx
-
 inputs:
-  subdomain:
-    type: string
-    label: "Subdomain"
-    description: "The address to access ConvertX (e.g., 'convert' -> convert.your-domain.com)"
-    default: "convert"
-    required: true
-    validation:
-      regex: "^[a-z0-9-]+$"
-      message: "Only lowercase letters, numbers, and hyphens allowed."
-
   jwt_secret:
     type: password
     label: "JWT Secret"
@@ -48,7 +36,7 @@ services:
           size_limit: 10GB
 
 listeners:
-  - name: "{{ .Inputs.subdomain }}"
+  - name: __primary
     guest_port: 3000
     flow: tcp
     protocol: http

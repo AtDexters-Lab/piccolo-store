@@ -1,16 +1,4 @@
-name: vaultwarden
-
 inputs:
-  subdomain:
-    type: string
-    label: "Subdomain"
-    description: "The address to access Vaultwarden"
-    default: "vault"
-    required: true
-    validation:
-      regex: "^[a-z0-9-]+$"
-      message: "Only lowercase letters, numbers, and hyphens allowed."
-
   admin_token:
     type: password
     label: "Admin Token"
@@ -32,7 +20,7 @@ services:
           size_limit: 5GB
 
 listeners:
-  - name: "{{ .Inputs.subdomain }}"
+  - name: __primary
     guest_port: 80
     flow: tcp
     protocol: http

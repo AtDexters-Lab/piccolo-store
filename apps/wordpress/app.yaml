@@ -1,16 +1,3 @@
-inputs:
-  subdomain:
-    type: string
-    label: "Subdomain"
-    description: "The address to access the blog"
-    default: "blog"
-    required: true
-    validation:
-      regex: "^[a-z0-9-]+$"
-      message: "Only lowercase letters, numbers, and hyphens allowed."
-
-name: "{{ .Inputs.subdomain }}"
-
 services:
   main:
     image: soulteary/sqlite-wordpress:6.5.3
@@ -22,7 +9,7 @@ services:
           size_limit: 5GB
 
 listeners:
-  - name: "web"
+  - name: __primary
     guest_port: 80
     flow: tcp
     protocol: http
