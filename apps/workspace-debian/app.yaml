@@ -1,0 +1,18 @@
+type: user
+
+services:
+  main:
+    image: lscr.io/linuxserver/webtop:debian-kde
+    environment:
+      # PUID/PGID can be adjusted if needed, defaulting to 1000 usually works well
+      TZ: Etc/UTC
+    bind_ports: [3000]
+
+listeners:
+  - name: __primary
+    guest_port: 3000
+    protocol: http
+    flow: tcp
+
+x-piccolo:
+  mode: workspace

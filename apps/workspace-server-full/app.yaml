@@ -1,0 +1,16 @@
+type: user
+
+services:
+  main:
+    # This image includes Git, Zsh, Oh My Zsh!, a non-root 'vscode' user with sudo access, 
+    # and many common development/sysadmin dependencies pre-installed.
+    # It serves as a "fat" server alternative to the slim default images.
+    image: mcr.microsoft.com/devcontainers/base:debian
+    user: vscode
+    bind_ports: []
+    environment:
+      # specific devcontainer settings can go here if needed
+      SHELL: /bin/zsh
+
+x-piccolo:
+  mode: workspace

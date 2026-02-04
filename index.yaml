@@ -11,7 +11,7 @@ apps:
 
   - name: code-server
     description: VS Code in the browser
-    icon: https://raw.githubusercontent.com/coder/code-server/main/docs/assets/logo-code-server.png
+    icon: https://raw.githubusercontent.com/coder/code-server/main/src/browser/media/pwa-icon-192.png
     version: 4.96.2
     category: Development
     path: apps/code-server/app.yaml
@@ -21,7 +21,7 @@ apps:
 
   - name: vaultwarden
     description: Unofficial Bitwarden compatible server written in Rust
-    icon: https://raw.githubusercontent.com/dani-garcia/vaultwarden/main/resources/vaultwarden-icon.png
+    icon: https://raw.githubusercontent.com/dani-garcia/vaultwarden/refs/heads/main/resources/vaultwarden-icon.svg
     version: 1.33.0
     category: Security
     path: apps/vaultwarden/app.yaml
@@ -31,7 +31,7 @@ apps:
 
   - name: homebox
     description: Inventory and asset management system
-    icon: https://raw.githubusercontent.com/sysadminsmedia/homebox/main/website/static/img/logo.png
+    icon: https://raw.githubusercontent.com/sysadminsmedia/homebox/refs/heads/main/frontend/public/favicon.svg
     version: 0.16.0
     category: Productivity
     path: apps/homebox/app.yaml
@@ -61,7 +61,7 @@ apps:
 
   - name: convertx
     description: Self-hosted online file converter supporting 1000+ formats
-    icon: https://raw.githubusercontent.com/C4illin/ConvertX/main/src/public/images/icons/icon.svg
+    icon: https://raw.githubusercontent.com/C4illin/ConvertX/main/public/android-chrome-192x192.png
     version: 0.16.1
     category: Utilities
     path: apps/convertx/app.yaml
@@ -70,42 +70,23 @@ apps:
     source_url: https://github.com/C4illin/ConvertX
 
   # Workspace environments
-  - name: workspace-ubuntu
-    description: Blank Ubuntu 22.04 Linux environment
-    icon: https://assets.ubuntu.com/v1/29985a98-ubuntu-logo32.png
-    version: "22.04"
-    category: Workspace
-    path: apps/workspace-ubuntu/app.yaml
-    maintainer: Piccolo
-    tags: [workspace, linux, ubuntu, blank]
-    source_url: https://hub.docker.com/_/ubuntu
 
-  - name: workspace-nodejs
-    description: Node.js 20 development environment
-    icon: https://nodejs.org/static/images/logo.svg
-    version: "20"
+  - name: workspace-debian
+    description: Full Debian KDE Desktop environment (Webtop)
+    icon: https://www.debian.org/logos/openlogo-nd-100.png
+    version: "bookworm"
     category: Workspace
-    path: apps/workspace-nodejs/app.yaml
+    path: apps/workspace-debian/app.yaml
     maintainer: Piccolo
-    tags: [workspace, nodejs, javascript, development]
-    source_url: https://hub.docker.com/_/node
+    tags: [workspace, debian, kde, desktop, gui]
+    source_url: https://hub.docker.com/r/linuxserver/webtop
 
-  - name: workspace-python
-    description: Python 3.11 development environment
-    icon: https://www.python.org/static/community_logos/python-logo-generic.svg
-    version: "3.11"
+  - name: workspace-server-full
+    description: Full Debian Server (DevContainer) with pre-installed utilities (Git, Zsh, Sudo)
+    icon: https://www.debian.org/logos/openlogo-nd-100.png
+    version: "bookworm"
     category: Workspace
-    path: apps/workspace-python/app.yaml
+    path: apps/workspace-server-full/app.yaml
     maintainer: Piccolo
-    tags: [workspace, python, development]
-    source_url: https://hub.docker.com/_/python
-
-  - name: workspace-nginx
-    description: Nginx web server workspace
-    icon: https://nginx.org/nginx.png
-    version: alpine
-    category: Workspace
-    path: apps/workspace-nginx/app.yaml
-    maintainer: Piccolo
-    tags: [workspace, nginx, web, server]
-    source_url: https://hub.docker.com/_/nginx
+    tags: [workspace, debian, server, full, devcontainer, cli]
+    source_url: https://hub.docker.com/_/microsoft-devcontainers-base
