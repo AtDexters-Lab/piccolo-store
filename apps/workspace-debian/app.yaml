@@ -3,6 +3,7 @@ type: user
 services:
   main:
     image: lscr.io/linuxserver/webtop:debian-kde
+    init: image
     environment:
       # PUID/PGID can be adjusted if needed, defaulting to 1000 usually works well
       PUID: 1000
