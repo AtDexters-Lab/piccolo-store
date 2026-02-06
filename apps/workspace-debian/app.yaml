@@ -5,6 +5,8 @@ services:
     image: lscr.io/linuxserver/webtop:debian-kde
     environment:
       # PUID/PGID can be adjusted if needed, defaulting to 1000 usually works well
+      PUID: 1000
+      PGID: 1000
       TZ: Etc/UTC
     bind_ports: [3000]
 
