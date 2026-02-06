@@ -15,6 +15,7 @@ services:
       PUID: 1000
       PGID: 1000
       TZ: "{{ .Inputs.timezone }}"
+      SHELL: /bin/bash
     bind_ports: [3000]
 
 listeners:
