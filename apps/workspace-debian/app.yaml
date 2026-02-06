@@ -9,7 +9,7 @@ type: user
 
 services:
   main:
-    image: lscr.io/linuxserver/webtop:debian-kde
+    image: lscr.io/linuxserver/webtop:debian-mate
     init: image
     environment:
       PUID: 1000

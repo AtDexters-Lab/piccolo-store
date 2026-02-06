@@ -72,13 +72,13 @@ apps:
   # Workspace environments
 
   - name: workspace-debian
-    description: Full Debian KDE Desktop environment (Webtop)
+    description: Full Debian MATE Desktop environment (Webtop)
     icon: https://www.debian.org/logos/openlogo-nd-100.png
     version: "bookworm"
     category: Workspace
     path: apps/workspace-debian/app.yaml
     maintainer: Piccolo
-    tags: [workspace, debian, kde, desktop, gui]
+    tags: [workspace, debian, mate, desktop, gui]
     source_url: https://hub.docker.com/r/linuxserver/webtop
 
   - name: workspace-server-full
