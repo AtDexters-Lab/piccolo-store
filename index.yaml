@@ -69,6 +69,17 @@ apps:
     tags: [converter, files, media, documents]
     source_url: https://github.com/C4illin/ConvertX
 
+  # System services
+
+  - name: namek
+    description: Piccolo OS control plane — device auth, DNS, and token issuance
+    version: latest
+    category: System
+    path: apps/namek/app.yaml
+    maintainer: Piccolo
+    tags: [system, dns, auth, control-plane]
+    source_url: https://github.com/AtDexters-Lab/namek-server
+
   # Workspace environments
 
   - name: workspace-debian

@@ -1,0 +1,130 @@
+type: system
+
+inputs:
+  __app_address__:
+    type: string
+    label: "App Address"
+    required: true
+    validation:
+      regex: "^[a-z][a-z0-9]{0,15}$"
+      message: "Only lowercase letters and numbers allowed; must start with a letter; max 16 chars."
+  db_password:
+    type: password
+    label: "Database Password"
+    generate: true
+    required: true
+  pdns_db_password:
+    type: password
+    label: "PowerDNS Database Password"
+    generate: true
+    required: true
+  pdns_api_key:
+    type: password
+    label: "PowerDNS API Key"
+    generate: true
+    required: true
+  base_domain:
+    type: string
+    label: "Base Domain"
+    description: "The base domain for namek DNS and public hostname"
+    default: "namek-dev.atdexters.com"
+    required: true
+  allow_software_tpm:
+    type: boolean
+    label: "Allow Software TPM"
+    description: "Accept devices with software TPMs (development only — no CA verification)"
+    default: false
+    required: true
+
+primary_service: namek
+
+services:
+  postgres:
+    image: ghcr.io/atdexters-lab/namek-postgres:latest
+    bind_ports: [5432]
+    environment:
+      POSTGRES_USER: namek
+      POSTGRES_PASSWORD: "{{ .Inputs.db_password }}"
+      POSTGRES_DB: namek
+      PDNS_PASSWORD: "{{ .Inputs.pdns_db_password }}"
+    storage:
+      persistent:
+        pgdata:
+          container: /var/lib/postgresql/data
+    resources:
+      limits:
+        memory: 512MB
+        cpu: 1.0
+
+  powerdns:
+    image: ghcr.io/atdexters-lab/namek-powerdns:latest
+    bind_ports: [5353, 8081]
+    after: [postgres]
+    environment:
+      PDNS_DB_HOST: "127.0.0.1"
+      PDNS_DB_PORT: "5432"
+      PDNS_DB_USER: pdns
+      PDNS_DB_PASSWORD: "{{ .Inputs.pdns_db_password }}"
+      PDNS_API_KEY: "{{ .Inputs.pdns_api_key }}"
+      PDNS_LOCAL_PORT: "5353"
+    resources:
+      limits:
+        memory: 256MB
+        cpu: 0.5
+
+  namek:
+    image: ghcr.io/atdexters-lab/namek-server:latest
+    bind_ports: [443, 53]
+    after: [postgres, powerdns]
+    resources:
+      limits:
+        memory: 256MB
+        cpu: 1.0
+
+listeners:
+  - name: __primary
+    guest_port: 443
+    flow: tls
+    protocol: raw
+
+  - name: dns
+    guest_port: 53
+    flow: udp
+    protocol: raw
+    port_claim: 53
+
+  - name: dnstcp
+    guest_port: 53
+    flow: tcp
+    protocol: raw
+    port_claim: 53
+
+permissions:
+  network:
+    internet: allow
+    dns: allow
+  filesystem:
+    read_only_root: false
+
+app_config:
+  publicHostname: "{{ .Inputs.base_domain }}"
+  listenAddress: ":443"
+  database:
+    url: "postgres://namek:{{ .Inputs.db_password }}@127.0.0.1:5432/namek?sslmode=disable"
+  dns:
+    baseDomain: "{{ .Inputs.base_domain }}"
+    zone: "{{ .Inputs.base_domain }}."
+    relayHostname: "relay.{{ .Inputs.base_domain }}"
+  powerDNS:
+    apiURL: "http://127.0.0.1:8081"
+    apiKey: "{{ .Inputs.pdns_api_key }}"
+    serverID: "localhost"
+    dnsAddress: "127.0.0.1:5353"
+  tpm:
+    allowSoftwareTPM: {{ .Inputs.allow_software_tpm }}
+  nexus:
+    trustedDomainSuffixes:
+      - ".nexus.{{ .Inputs.base_domain }}"
+
+x-piccolo:
+  mode: service
