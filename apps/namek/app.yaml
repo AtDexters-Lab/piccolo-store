@@ -23,11 +23,20 @@ inputs:
     label: "PowerDNS API Key"
     generate: true
     required: true
-  base_domain:
+  public_hostname:
     type: string
-    label: "Base Domain"
-    description: "The base domain for namek DNS and public hostname"
-    default: "namek-dev.atdexters.com"
+    label: "Public Hostname"
+    description: "The HTTPS hostname for the namek API (e.g., namek.example.com)"
+    required: true
+  dns_base_domain:
+    type: string
+    label: "DNS Base Domain"
+    description: "The DNS zone namek manages for device hostnames (e.g., piccolospace.com → slug.piccolospace.com)"
+    required: true
+  trusted_domain_suffixes:
+    type: array
+    label: "Trusted Nexus Domain Suffixes"
+    description: "Domain suffixes trusted for Nexus mTLS relay connections"
     required: true
   allow_software_tpm:
     type: boolean
@@ -107,14 +116,14 @@ permissions:
     read_only_root: false
 
 app_config:
-  publicHostname: "{{ .Inputs.base_domain }}"
+  publicHostname: "{{ .Inputs.public_hostname }}"
   listenAddress: ":443"
   database:
     url: "postgres://namek:{{ .Inputs.db_password }}@127.0.0.1:5432/namek?sslmode=disable"
   dns:
-    baseDomain: "{{ .Inputs.base_domain }}"
-    zone: "{{ .Inputs.base_domain }}."
-    relayHostname: "relay.{{ .Inputs.base_domain }}"
+    baseDomain: "{{ .Inputs.dns_base_domain }}"
+    zone: "{{ .Inputs.dns_base_domain }}."
+    relayHostname: "relay.{{ .Inputs.dns_base_domain }}"
   powerDNS:
     apiURL: "http://127.0.0.1:8081"
     apiKey: "{{ .Inputs.pdns_api_key }}"
@@ -123,8 +132,7 @@ app_config:
   tpm:
     allowSoftwareTPM: {{ .Inputs.allow_software_tpm }}
   nexus:
-    trustedDomainSuffixes:
-      - ".nexus.{{ .Inputs.base_domain }}"
+    trustedDomainSuffixes: {{ .Inputs.trusted_domain_suffixes }}
 
 x-piccolo:
   mode: service
