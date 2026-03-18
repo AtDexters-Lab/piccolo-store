@@ -83,7 +83,7 @@ services:
 
   namek:
     image: ghcr.io/atdexters-lab/namek-server:latest
-    bind_ports: [443, 53]
+    bind_ports: [443, 53, 8056]
     after: [postgres, powerdns]
     resources:
       limits:
@@ -108,6 +108,16 @@ listeners:
     protocol: raw
     port_claim: 53
 
+  - name: dnsadmin
+    guest_port: 8056
+    flow: tcp
+    protocol: http
+    auth:
+      rules:
+        - path: "/"
+          type: prefix
+          strategy: protected
+
 permissions:
   network:
     internet: allow
@@ -118,6 +128,7 @@ permissions:
 app_config:
   publicHostname: "{{ .Inputs.public_hostname }}"
   listenAddress: ":443"
+  adminAddress: ":8056"
   database:
     url: "postgres://namek:{{ .Inputs.db_password }}@127.0.0.1:5432/namek?sslmode=disable"
   dns:
