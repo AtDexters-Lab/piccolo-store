@@ -38,6 +38,11 @@ inputs:
     label: "Trusted Nexus Domain Suffixes"
     description: "Domain suffixes trusted for Nexus mTLS relay connections"
     required: true
+  dns_nameservers:
+    type: array
+    label: "DNS Nameservers"
+    description: "Public-facing nameserver hostnames for NS records. Leave empty for direct mode (defaults to public_hostname). Set when using fronting DNS servers (hidden-primary mode)."
+    required: false
   allow_software_tpm:
     type: boolean
     label: "Allow Software TPM"
@@ -135,6 +140,7 @@ app_config:
     baseDomain: "{{ .Inputs.dns_base_domain }}"
     zone: "{{ .Inputs.dns_base_domain }}."
     relayHostname: "relay.{{ .Inputs.dns_base_domain }}"
+    nameservers: {{ .Inputs.dns_nameservers }}
   powerDNS:
     apiURL: "http://127.0.0.1:8081"
     apiKey: "{{ .Inputs.pdns_api_key }}"
