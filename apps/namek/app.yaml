@@ -113,7 +113,7 @@ listeners:
     protocol: raw
     port_claim: 53
 
-  - name: dnsadmin
+  - name: admin
     guest_port: 8056
     flow: tcp
     protocol: http
