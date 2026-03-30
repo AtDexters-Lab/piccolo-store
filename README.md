@@ -15,6 +15,7 @@ Official app catalog for Piccolo OS. Apps listed here are installable from the P
 | [ConvertX](https://github.com/C4illin/ConvertX) | Utilities | 0.16.1 | Self-hosted online file converter supporting 1000+ formats |
 | [Homebox](https://github.com/sysadminsmedia/homebox) | Productivity | 0.16.0 | Inventory and asset management system |
 | [Immich](https://github.com/immich-app/immich) | Media | v2 | High performance self-hosted photo and video management solution |
+| [Namek](https://github.com/AtDexters-Lab/namek-server) | System | latest | Piccolo OS control plane — device auth, DNS, and token issuance |
 | [Uptime Kuma](https://github.com/louislam/uptime-kuma) | Monitoring | 1.23.13 | A fancy self-hosted monitoring tool |
 | [Vaultwarden](https://github.com/dani-garcia/vaultwarden) | Security | 1.33.0 | Unofficial Bitwarden compatible server written in Rust |
 | [WordPress](https://wordpress.org) | CMS | 6.4 | Web software you can use to create a beautiful website, blog, or app |

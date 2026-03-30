@@ -82,9 +82,7 @@ echo "Generating README apps table..."
   echo "|------|----------|---------|-------------|"
 } > "$TABLE_FILE"
 
-# Filter non-System apps for the README table
 while IFS=$'\t' read -r name category version description source_url _icon; do
-  [[ "$category" == "System" ]] && continue
   display_name=$(to_title_case "$name")
   description=$(md_escape_pipes "$description")
 
