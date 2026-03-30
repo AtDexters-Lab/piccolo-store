@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Piccolo Store — App Catalog</title>
+  <meta name="description" content="Official app catalog for Piccolo OS. Browse self-hosted apps installable from the Piccolo portal.">
+  <meta property="og:title" content="Piccolo Store">
+  <meta property="og:description" content="Official app catalog for Piccolo OS. Browse self-hosted apps installable from the Piccolo portal.">
+  <meta property="og:type" content="website">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #ffffff;
+      --bg-card: #f8f9fa;
+      --text: #1a1a2e;
+      --text-muted: #6c757d;
+      --border: #e2e8f0;
+      --shadow: rgba(0, 0, 0, 0.06);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f172a;
+        --bg-card: #1e293b;
+        --text: #e2e8f0;
+        --text-muted: #94a3b8;
+        --border: #334155;
+        --shadow: rgba(0, 0, 0, 0.3);
+      }
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      text-align: center;
+      padding: 3rem 1rem 2rem;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    header a {
+      color: var(--text-muted);
+      text-decoration: underline;
+    }
+
+    main { flex: 1; max-width: 1100px; width: 100%; margin: 0 auto; padding: 0 1rem 2rem; }
+
+    .category-section { margin-bottom: 2.5rem; }
+    .category-section h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      box-shadow: 0 1px 3px var(--shadow);
+      transition: box-shadow 0.15s;
+    }
+
+    .card:hover { box-shadow: 0 4px 12px var(--shadow); }
+
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .icon-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+      border-radius: 8px;
+    }
+
+    .card-body { flex: 1; min-width: 0; }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.15rem;
+    }
+
+    .card-title a {
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .card-title a:hover { text-decoration: underline; }
+
+    .card-meta {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      margin-bottom: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .version {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .card-desc {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+
+    footer a { color: var(--text-muted); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Piccolo Store</h1>
+    <p>Official app catalog for <a href="https://github.com/AtDexters-Lab/piccolo-os">Piccolo OS</a>. Install any of these from your device's web portal.</p>
+  </header>
+  <main>
+    <section class="category-section">
+      <h2>Media</h2>
+      <div class="grid">
+    <div class="card">
+      <div class="card-icon"><img src="https://raw.githubusercontent.com/immich-app/immich/main/docs/static/img/favicon.png" alt="" loading="lazy"><div class="icon-placeholder" style="background:#e74c3c;display:none">I</div></div>
+      <div class="card-body">
+        <div class="card-title"><a href="https://github.com/immich-app/immich">Immich</a></div>
+        <div class="card-meta">
+          <span class="badge" style="background:#e74c3c">Media</span>
+          <span class="version">v2</span>
+        </div>
+        <div class="card-desc">High performance self-hosted photo and video management solution</div>
+      </div>
+    </div>
+      </div>
+    </section>
+    <section class="category-section">
+      <h2>Security</h2>
+      <div class="grid">
+    <div class="card">
+      <div class="card-icon"><img src="https://raw.githubusercontent.com/dani-garcia/vaultwarden/refs/heads/main/resources/vaultwarden-icon.svg" alt="" loading="lazy"><div class="icon-placeholder" style="background:#9b59b6;display:none">V</div></div>
+      <div class="card-body">
+        <div class="card-title"><a href="https://github.com/dani-garcia/vaultwarden">Vaultwarden</a></div>
+        <div class="card-meta">
+          <span class="badge" style="background:#9b59b6">Security</span>
+          <span class="version">v1.33.0</span>
+        </div>
+        <div class="card-desc">Unofficial Bitwarden compatible server written in Rust</div>
+      </div>
+    </div>
+      </div>
+    </section>
+    <section class="category-section">
+      <h2>Monitoring</h2>
+      <div class="grid">
+    <div class="card">
+      <div class="card-icon"><img src="https://raw.githubusercontent.com/louislam/uptime-kuma/master/public/icon.png" alt="" loading="lazy"><div class="icon-placeholder" style="background:#3498db;display:none">U</div></div>
+      <div class="card-body">
+        <div class="card-title"><a href="https://github.com/louislam/uptime-kuma">Uptime Kuma</a></div>
+        <div class="card-meta">
+          <span class="badge" style="background:#3498db">Monitoring</span>
+          <span class="version">v1.23.13</span>
+        </div>
+        <div class="card-desc">A fancy self-hosted monitoring tool</div>
+      </div>
+    </div>
+      </div>
+    </section>
+    <section class="category-section">
+      <h2>Development</h2>
+      <div class="grid">
+    <div class="card">
+      <div class="card-icon"><img src="https://raw.githubusercontent.com/coder/code-server/main/src/browser/media/pwa-icon-192.png" alt="" loading="lazy"><div class="icon-placeholder" style="background:#2ecc71;display:none">C</div></div>
+      <div class="card-body">
+        <div class="card-title"><a href="https://github.com/coder/code-server">Code Server</a></div>
+        <div class="card-meta">
+          <span class="badge" style="background:#2ecc71">Development</span>
+          <span class="version">v4.96.2</span>
+        </div>
+        <div class="card-desc">VS Code in the browser</div>
+      </div>
+    </div>
+      </div>
+    </section>
+    <section class="category-section">
+      <h2>CMS</h2>
+      <div class="grid">
+    <div class="card">
+      <div class="card-icon"><img src="https://s.w.org/style/images/about/WordPress-logotype-wmark.png" alt="" loading="lazy"><div class="icon-placeholder" style="background:#e67e22;display:none">W</div></div>
+      <div class="card-body">
+        <div class="card-title"><a href="https://wordpress.org">WordPress</a></div>
+        <div class="card-meta">
+          <span class="badge" style="background:#e67e22">CMS</span>
+          <span class="version">v6.4</span>
+        </div>
+        <div class="card-desc">Web software you can use to create a beautiful website, blog, or app</div>
+      </div>
+    </div>
+      </div>
+    </section>
+    <section class="category-section">
+      <h2>Productivity</h2>
+      <div class="grid">
+    <div class="card">
+      <div class="card-icon"><img src="https://raw.githubusercontent.com/sysadminsmedia/homebox/refs/heads/main/frontend/public/favicon.svg" alt="" loading="lazy"><div class="icon-placeholder" style="background:#1abc9c;display:none">H</div></div>
+      <div class="card-body">
+        <div class="card-title"><a href="https://github.com/sysadminsmedia/homebox">Homebox</a></div>
+        <div class="card-meta">
+          <span class="badge" style="background:#1abc9c">Productivity</span>
+          <span class="version">v0.16.0</span>
+        </div>
+        <div class="card-desc">Inventory and asset management system</div>
+      </div>
+    </div>
+      </div>
+    </section>
+    <section class="category-section">
+      <h2>Utilities</h2>
+      <div class="grid">
+    <div class="card">
+      <div class="card-icon"><img src="https://raw.githubusercontent.com/C4illin/ConvertX/main/public/android-chrome-192x192.png" alt="" loading="lazy"><div class="icon-placeholder" style="background:#f39c12;display:none">C</div></div>
+      <div class="card-body">
+        <div class="card-title"><a href="https://github.com/C4illin/ConvertX">ConvertX</a></div>
+        <div class="card-meta">
+          <span class="badge" style="background:#f39c12">Utilities</span>
+          <span class="version">v0.16.1</span>
+        </div>
+        <div class="card-desc">Self-hosted online file converter supporting 1000+ formats</div>
+      </div>
+    </div>
+      </div>
+    </section>
+    <section class="category-section">
+      <h2>Workspace</h2>
+      <div class="grid">
+    <div class="card">
+      <div class="card-icon"><img src="https://www.debian.org/logos/openlogo-nd-100.png" alt="" loading="lazy"><div class="icon-placeholder" style="background:#34495e;display:none">W</div></div>
+      <div class="card-body">
+        <div class="card-title"><a href="https://hub.docker.com/r/linuxserver/webtop">Workspace Debian</a></div>
+        <div class="card-meta">
+          <span class="badge" style="background:#34495e">Workspace</span>
+          <span class="version">bookworm</span>
+        </div>
+        <div class="card-desc">Full Debian MATE Desktop environment (Webtop)</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-icon"><img src="https://www.debian.org/logos/openlogo-nd-100.png" alt="" loading="lazy"><div class="icon-placeholder" style="background:#34495e;display:none">W</div></div>
+      <div class="card-body">
+        <div class="card-title"><a href="https://hub.docker.com/_/microsoft-devcontainers-base">Workspace Server Full</a></div>
+        <div class="card-meta">
+          <span class="badge" style="background:#34495e">Workspace</span>
+          <span class="version">bookworm</span>
+        </div>
+        <div class="card-desc">Full Debian Server (DevContainer) with pre-installed utilities (Git, Zsh, Sudo)</div>
+      </div>
+    </div>
+      </div>
+    </section>
+    <section class="category-section">
+      <h2>System</h2>
+      <div class="grid">
+    <div class="card">
+      <div class="card-icon"><div class="icon-placeholder" style="background:#7f8c8d">N</div></div>
+      <div class="card-body">
+        <div class="card-title"><a href="https://github.com/AtDexters-Lab/namek-server">Namek</a></div>
+        <div class="card-meta">
+          <span class="badge" style="background:#7f8c8d">System</span>
+          <span class="version">latest</span>
+        </div>
+        <div class="card-desc">Piccolo OS control plane — device auth, DNS, and token issuance</div>
+      </div>
+    </div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <p>
+      Generated from
+      <a href="https://github.com/AtDexters-Lab/piccolo-store">piccolo-store/index.yaml</a>
+      &middot;
+      <a href="https://github.com/AtDexters-Lab/piccolo-os">Piccolo OS</a>
+    </p>
+  </footer>
+  <script>
+    // Fallback: show placeholder when icon fails to load
+    document.querySelectorAll('.card-icon img').forEach(function(img) {
+      img.addEventListener('error', function() {
+        this.style.display = 'none';
+        var placeholder = this.nextElementSibling;
+        if (placeholder) placeholder.style.display = 'flex';
+      });
+    });
+  </script>
+</body>
+</html>
