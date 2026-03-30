@@ -75,6 +75,14 @@
       border-bottom: 2px solid var(--border);
     }
 
+    .stack-section { margin-top: 3rem; border-top: 2px solid var(--border); padding-top: 2rem; }
+    .stack-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      max-width: 640px;
+      margin-bottom: 1.25rem;
+    }
+
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -324,8 +332,9 @@
     </div>
       </div>
     </section>
-    <section class="category-section">
-      <h2>System</h2>
+    <section class="category-section stack-section">
+      <h2>Self-host the full stack</h2>
+      <p class="stack-desc">Piccolo OS is open source top to bottom — including the orchestrator. Install Namek on a second device and run your own control plane. No account required, no managed service dependency.</p>
       <div class="grid">
     <div class="card">
       <div class="card-icon"><div class="icon-placeholder" style="background:#7f8c8d">N</div></div>

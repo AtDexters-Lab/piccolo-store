@@ -214,6 +214,14 @@ cat > "$DOCS_DIR/index.html" << 'HTMLEOF'
       border-bottom: 2px solid var(--border);
     }
 
+    .stack-section { margin-top: 3rem; border-top: 2px solid var(--border); padding-top: 2rem; }
+    .stack-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      max-width: 640px;
+      margin-bottom: 1.25rem;
+    }
+
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -383,19 +391,21 @@ done < "$DATA_FILE"
 
 # --- Define category display order (user-facing first, system last) ---
 ORDERED_CATEGORIES=()
-for cat in Media Security Monitoring Development CMS Productivity Utilities Workspace System; do
+# Separate System from user-facing categories
+for cat in Media Security Monitoring Development CMS Productivity Utilities Workspace; do
   if [[ -n "${CATEGORY_CARDS[$cat]+x}" ]]; then
     ORDERED_CATEGORIES+=("$cat")
   fi
 done
-# Add any remaining categories not in the predefined order
+# Add any remaining non-System categories not in the predefined order
 for cat in "${CATEGORIES[@]}"; do
+  [[ "$cat" == "System" ]] && continue
   if [[ ! " ${ORDERED_CATEGORIES[*]} " =~ " ${cat} " ]]; then
     ORDERED_CATEGORIES+=("$cat")
   fi
 done
 
-# --- Write category sections ---
+# --- Write user-facing category sections ---
 for cat in "${ORDERED_CATEGORIES[@]}"; do
   cat >> "$DOCS_DIR/index.html" << SECTIONEOF
     <section class="category-section">
@@ -405,6 +415,20 @@ ${CATEGORY_CARDS[$cat]}      </div>
     </section>
 SECTIONEOF
 done
+
+# --- Write "Self-host the full stack" section for System apps ---
+if [[ -n "${CATEGORY_CARDS[System]+x}" ]]; then
+  cat >> "$DOCS_DIR/index.html" << 'STACKEOF'
+    <section class="category-section stack-section">
+      <h2>Self-host the full stack</h2>
+      <p class="stack-desc">Piccolo OS is open source top to bottom — including the orchestrator. Install Namek on a second device and run your own control plane. No account required, no managed service dependency.</p>
+      <div class="grid">
+STACKEOF
+  cat >> "$DOCS_DIR/index.html" << SECTIONEOF
+${CATEGORY_CARDS[System]}      </div>
+    </section>
+SECTIONEOF
+fi
 
 # --- Write HTML footer ---
 cat >> "$DOCS_DIR/index.html" << 'HTMLEOF'
