@@ -42,11 +42,11 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add README.md docs/
+          git add docs/
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "chore: regenerate app catalog"
+            git commit -m "chore: regenerate app catalog [skip ci]"
             git push
           fi
 
@@ -57,6 +57,7 @@ jobs:
         uses: actions/upload-pages-artifact@v4
         with:
           path: docs/
+          include-hidden-files: true
 
       - name: Deploy to GitHub Pages
         id: deployment

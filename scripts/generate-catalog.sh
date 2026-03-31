@@ -1,28 +1,15 @@
 #!/usr/bin/env bash
-# Generates the README apps table and HTML catalog page from index.yaml.
+# Generates the HTML catalog page from index.yaml.
 # Requires: yq v4+ (https://github.com/mikefarah/yq)
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 INDEX="$REPO_ROOT/index.yaml"
-README="$REPO_ROOT/README.md"
 DOCS_DIR="$REPO_ROOT/docs"
 
 # --- Validate prerequisites ---
 command -v yq >/dev/null 2>&1 || { echo "Error: yq v4 is required. Install from https://github.com/mikefarah/yq"; exit 1; }
 [[ -f "$INDEX" ]] || { echo "Error: index.yaml not found at $INDEX"; exit 1; }
-[[ -f "$README" ]] || { echo "Error: README.md not found at $README"; exit 1; }
-
-if ! grep -q '<!-- APPS_TABLE_START -->' "$README"; then
-  echo "Error: <!-- APPS_TABLE_START --> marker missing from README.md"
-  echo "Fix: Add <!-- APPS_TABLE_START --> and <!-- APPS_TABLE_END --> markers to README.md"
-  exit 1
-fi
-if ! grep -q '<!-- APPS_TABLE_END -->' "$README"; then
-  echo "Error: <!-- APPS_TABLE_END --> marker missing from README.md"
-  echo "Fix: Add <!-- APPS_TABLE_START --> and <!-- APPS_TABLE_END --> markers to README.md"
-  exit 1
-fi
 
 # --- Helper: HTML-escape a string ---
 html_escape() {
@@ -53,19 +40,11 @@ to_title_case() {
   echo "$name" | tr '-' ' ' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) substr($i,2)}1'
 }
 
-# --- Helper: Escape pipe chars for markdown tables ---
-md_escape_pipes() {
-  local s="$1"
-  printf '%s' "${s//|/\\|}"
-}
-
 # =============================================================================
 # Extract all app data once
 # =============================================================================
 DATA_FILE=$(mktemp)
-TABLE_FILE=$(mktemp)
-README_TMP="$README.tmp"
-trap 'rm -f "$DATA_FILE" "$TABLE_FILE" "$README_TMP"' EXIT
+trap 'rm -f "$DATA_FILE"' EXIT
 
 yq -r '.apps[] | [.name, .category, .version // "", .description // "", .source_url // "", .icon // ""] | @tsv' "$INDEX" \
   | sort -t$'\t' -k1,1 > "$DATA_FILE"
@@ -73,47 +52,7 @@ yq -r '.apps[] | [.name, .category, .version // "", .description // "", .source_
 APP_COUNT=$(wc -l < "$DATA_FILE")
 
 # =============================================================================
-# PART 1: Generate README apps table
-# =============================================================================
-echo "Generating README apps table..."
-
-{
-  echo "| Name | Category | Version | Description |"
-  echo "|------|----------|---------|-------------|"
-} > "$TABLE_FILE"
-
-while IFS=$'\t' read -r name category version description source_url _icon; do
-  display_name=$(to_title_case "$name")
-  description=$(md_escape_pipes "$description")
-
-  if [[ -n "$source_url" && "$source_url" == https://* ]]; then
-    echo "| [$display_name]($source_url) | $category | $version | $description |"
-  else
-    echo "| $display_name | $category | $version | $description |"
-  fi
-done < "$DATA_FILE" >> "$TABLE_FILE"
-
-# Inject table into README between markers using awk
-awk -v table_file="$TABLE_FILE" '
-  /<!-- APPS_TABLE_START -->/ {
-    print
-    while ((getline line < table_file) > 0) print line
-    skip = 1
-    next
-  }
-  /<!-- APPS_TABLE_END -->/ {
-    skip = 0
-    print
-    next
-  }
-  !skip { print }
-' "$README" > "$README.tmp"
-mv "$README.tmp" "$README"
-
-echo "  README table updated ($(grep -c '^|' "$TABLE_FILE") rows)"
-
-# =============================================================================
-# PART 2: Generate HTML catalog page
+# Generate HTML catalog page
 # =============================================================================
 echo "Generating HTML catalog page..."
 

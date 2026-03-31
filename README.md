@@ -6,22 +6,7 @@ Official app catalog for Piccolo OS. Apps listed here are installable from the P
 
 ## Available Apps
 
-[Browse the full catalog](https://atdexters-lab.github.io/piccolo-store)
-
-<!-- APPS_TABLE_START -->
-| Name | Category | Version | Description |
-|------|----------|---------|-------------|
-| [Code Server](https://github.com/coder/code-server) | Development | 4.96.2 | VS Code in the browser |
-| [ConvertX](https://github.com/C4illin/ConvertX) | Utilities | 0.16.1 | Self-hosted online file converter supporting 1000+ formats |
-| [Homebox](https://github.com/sysadminsmedia/homebox) | Productivity | 0.16.0 | Inventory and asset management system |
-| [Immich](https://github.com/immich-app/immich) | Media | v2 | High performance self-hosted photo and video management solution |
-| [Namek](https://github.com/AtDexters-Lab/namek-server) | System | latest | Piccolo OS control plane — device auth, DNS, and token issuance |
-| [Uptime Kuma](https://github.com/louislam/uptime-kuma) | Monitoring | 1.23.13 | A fancy self-hosted monitoring tool |
-| [Vaultwarden](https://github.com/dani-garcia/vaultwarden) | Security | 1.33.0 | Unofficial Bitwarden compatible server written in Rust |
-| [WordPress](https://wordpress.org) | CMS | 6.4 | Web software you can use to create a beautiful website, blog, or app |
-| [Workspace Debian](https://hub.docker.com/r/linuxserver/webtop) | Workspace | bookworm | Full Debian MATE Desktop environment (Webtop) |
-| [Workspace Server Full](https://hub.docker.com/_/microsoft-devcontainers-base) | Workspace | bookworm | Full Debian Server (DevContainer) with pre-installed utilities (Git, Zsh, Sudo) |
-<!-- APPS_TABLE_END -->
+Browse the **[app catalog](https://atdexters-lab.github.io/piccolo-store)** to see what's installable.
 
 ## Getting Started
 
@@ -49,7 +34,7 @@ The catalog is defined in `index.yaml`, which points to individual app manifests
 2. **Add `app.yaml`:** Define your application's container image, listeners, storage, etc.
 3. **Update `index.yaml`:** Add an entry pointing to your new app.
 
-The README table and [HTML catalog](https://atdexters-lab.github.io/piccolo-store) are regenerated automatically by CI when `index.yaml` or `apps/` change.
+The [app catalog](https://atdexters-lab.github.io/piccolo-store) is regenerated automatically by CI when `index.yaml` or `apps/` change.
 
 ### `index.yaml` Format
 
