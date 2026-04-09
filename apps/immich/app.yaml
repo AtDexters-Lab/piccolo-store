@@ -1,4 +1,9 @@
 inputs:
+  admin_password:
+    type: password
+    label: "Admin Password"
+    generate: true
+    required: true
   postgres_password:
     type: password
     label: "Database Password"
@@ -73,6 +78,18 @@ services:
         IMMICH_OAUTH_ISSUER_URL: "{{ .System.Auth.Issuer }}"
         IMMICH_OAUTH_CLIENT_ID: "{{ .System.Auth.ClientID }}"
         IMMICH_OAUTH_CLIENT_SECRET: "{{ .System.Auth.ClientSecret }}"
+    init_script:
+      file: scripts/init.js
+      shell: node
+      env:
+        # Must match Piccolo's admin email so OIDC SSO maps to the same Immich account.
+        ADMIN_EMAIL: "admin@piccolo.local"
+        ADMIN_PASSWORD: "{{ .Inputs.admin_password }}"
+        OAUTH_ISSUER: "{{ .System.Auth.Issuer }}"
+        OAUTH_CLIENT_ID: "{{ .System.Auth.ClientID }}"
+        OAUTH_CLIENT_SECRET: "{{ .System.Auth.ClientSecret }}"
+      timeout: 90s
+      ready_timeout: 30s
     environment:
       # Database connection
       DB_HOSTNAME: "127.0.0.1"
