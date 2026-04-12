@@ -73,6 +73,9 @@ services:
         - "/user-settings"
       redirect_uris:
         - "app.immich:///oauth-callback"
+      authorize_paths:
+        - "/auth/login"
+        - "/api/oauth/authorize"
       ca_mount_path: "/etc/ssl/certs/piccolo-ca.crt"
       env:
         IMMICH_OAUTH_ISSUER_URL: "{{ .System.Auth.Issuer }}"
