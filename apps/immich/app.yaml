@@ -41,6 +41,18 @@ permissions:
     max_processes: 500
     max_open_files: 4096
 
+# Resource stewardship (app-level). Enforced at per-app-user systemd slice.
+# See piccolod/.claude/plans/resource-stewardship.md D-1, D-2, D-5.
+resources:
+  priority: normal
+  memory:
+    # Immich runs four services including a Python ML worker with CLIP + face
+    # recognition models (~1.25 GiB anon + ~0.76 GiB shmem at peak).
+    min_required: 6GB
+    profile: elastic
+  storage:
+    max: 500GiB
+
 healthcheck:
   http:
     path: /api/server-info/ping
@@ -121,11 +133,6 @@ services:
       persistent:
         upload-data:
           container: /data
-    
-    resources:
-      limits:
-        memory: 4GB
-        cpu: 2.0
 
   machine-learning:
     image: ghcr.io/immich-app/immich-machine-learning:v2
@@ -134,18 +141,10 @@ services:
       persistent:
         model-cache:
           container: /cache
-    resources:
-      limits:
-        memory: 2GB
-        cpu: 2.0
 
   redis:
     image: docker.io/valkey/valkey:9@sha256:fb8d272e529ea567b9bf1302245796f21a2672b8368ca3fcb938ac334e613c8f
     bind_ports: [6379]
-    resources:
-      limits:
-        memory: 512MB
-        cpu: 1.0
 
   database:
     image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23
@@ -159,7 +158,3 @@ services:
       persistent:
         pgdata:
           container: /var/lib/postgresql/data
-    resources:
-      limits:
-        memory: 2GB
-        cpu: 2.0

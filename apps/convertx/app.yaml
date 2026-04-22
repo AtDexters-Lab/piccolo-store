@@ -41,5 +41,13 @@ listeners:
     flow: tcp
     protocol: http
 
+# Resource stewardship (app-level). Enforced at per-app-user systemd slice.
+# ConvertX is a lightweight transcoder; bounded profile, modest floor.
+resources:
+  priority: normal
+  memory:
+    min_required: 512MB
+    profile: bounded
+
 x-piccolo:
   mode: service

@@ -65,10 +65,6 @@ services:
       persistent:
         pgdata:
           container: /var/lib/postgresql/data
-    resources:
-      limits:
-        memory: 512MB
-        cpu: 1.0
 
   powerdns:
     image: ghcr.io/atdexters-lab/namek-powerdns:latest
@@ -81,19 +77,11 @@ services:
       PDNS_DB_PASSWORD: "{{ .Inputs.pdns_db_password }}"
       PDNS_API_KEY: "{{ .Inputs.pdns_api_key }}"
       PDNS_LOCAL_PORT: "5353"
-    resources:
-      limits:
-        memory: 256MB
-        cpu: 0.5
 
   namek:
     image: ghcr.io/atdexters-lab/namek-server:latest
     bind_ports: [443, 53, 8056]
     after: [postgres, powerdns]
-    resources:
-      limits:
-        memory: 256MB
-        cpu: 1.0
 
 listeners:
   - name: __primary
@@ -129,6 +117,14 @@ permissions:
     dns: allow
   filesystem:
     read_only_root: false
+
+# Resource stewardship (app-level). Enforced at per-app-user systemd slice.
+# Namek is a lightweight DNS + control-plane service; bounded profile, modest floor.
+resources:
+  priority: normal
+  memory:
+    min_required: 1GB
+    profile: bounded
 
 app_config:
   publicHostname: "{{ .Inputs.public_hostname }}"
