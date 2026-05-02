@@ -49,6 +49,12 @@ inputs:
     description: "Accept devices with software TPMs (development only — no CA verification)"
     default: false
     required: true
+  auto_unlock_max_window_seconds:
+    type: int
+    label: "Auto-unlock Max Window (seconds)"
+    description: "Server-side ceiling on the device-requested auto-unlock pickup window. Devices request a window on each deposit; namek clamps anything above this value and signals the clamp in the response. Default 600 (10 min) covers normal reboot variance."
+    default: 600
+    required: true
 
 primary_service: namek
 
@@ -144,6 +150,8 @@ app_config:
     allowSoftwareTPM: {{ .Inputs.allow_software_tpm }}
   nexus:
     trustedDomainSuffixes: {{ .Inputs.trusted_domain_suffixes }}
+  autoUnlock:
+    maxWindowSeconds: {{ .Inputs.auto_unlock_max_window_seconds }}
 
 x-piccolo:
   mode: service
