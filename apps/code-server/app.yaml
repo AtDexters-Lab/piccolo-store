@@ -8,7 +8,7 @@ inputs:
 
 services:
   main:
-    image: docker.io/codercom/code-server:latest
+    image: docker.io/codercom/code-server:4.117.0
     bind_ports: [8080]
     environment:
       PASSWORD: "{{ .Inputs.password }}"
@@ -27,6 +27,23 @@ listeners:
     guest_port: 8080
     flow: tcp
     protocol: http
+    auth:
+      rules:
+        - path: "/"
+          type: prefix
+          strategy: protected
+
+resources:
+  priority: normal
+  memory:
+    min_required: 512MB
+    profile: bounded
+
+healthcheck:
+  http:
+    path: /healthz
+    timeout: 10s
+    retries: 3
 
 x-piccolo:
   mode: workspace

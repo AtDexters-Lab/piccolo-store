@@ -7,22 +7,22 @@ inputs:
     required: true
 
   account_registration:
-    type: string
+    type: boolean
     label: "Account Registration"
     description: "Allow new user registrations"
-    default: "false"
+    default: false
     required: false
 
   allow_unauthenticated:
-    type: string
+    type: boolean
     label: "Allow Unauthenticated"
     description: "Allow access without authentication"
-    default: "false"
+    default: false
     required: false
 
 services:
   main:
-    image: ghcr.io/c4illin/convertx:v0.16.1
+    image: ghcr.io/c4illin/convertx:v0.17.0
     bind_ports: [3000]
     environment:
       JWT_SECRET: "{{ .Inputs.jwt_secret }}"
@@ -40,14 +40,23 @@ listeners:
     guest_port: 3000
     flow: tcp
     protocol: http
+    auth:
+      rules:
+        - path: "/"
+          type: prefix
+          strategy: protected
 
-# Resource stewardship (app-level). Enforced at per-app-user systemd slice.
-# ConvertX is a lightweight transcoder; bounded profile, modest floor.
 resources:
   priority: normal
   memory:
     min_required: 512MB
     profile: bounded
+
+healthcheck:
+  http:
+    path: /favicon.ico
+    timeout: 10s
+    retries: 3
 
 x-piccolo:
   mode: service

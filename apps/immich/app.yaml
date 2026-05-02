@@ -41,8 +41,6 @@ permissions:
     max_processes: 500
     max_open_files: 4096
 
-# Resource stewardship (app-level). Enforced at per-app-user systemd slice.
-# See piccolod/.claude/plans/resource-stewardship.md D-1, D-2, D-5.
 resources:
   priority: normal
   memory:
@@ -56,7 +54,6 @@ resources:
 healthcheck:
   http:
     path: /api/server-info/ping
-    port: "{{ .Inputs.__app_address__ }}"
     timeout: 10s
     retries: 5
 
@@ -106,29 +103,17 @@ services:
       timeout: 90s
       ready_timeout: 30s
     environment:
-      # Database connection
       DB_HOSTNAME: "127.0.0.1"
       DB_USERNAME: "postgres"
       DB_PASSWORD: "{{ .Inputs.postgres_password }}"
       DB_DATABASE_NAME: "immich"
-      # IMMICH_CONFIG_FILE: "/usr/src/app/config.json"
-      
-      # Redis connection
       REDIS_HOSTNAME: "127.0.0.1"
-      
-      # ML Service connection
       IMMICH_MACHINE_LEARNING_URL: "http://127.0.0.1:3003"
-      
-      # Storage locations
       UPLOAD_LOCATION: "/data"
-      
-      # General
       IMMICH_PORT: "2283"
       LOG_LEVEL: "log"
-      
-      # Auth
       NODE_EXTRA_CA_CERTS: "/etc/ssl/certs/piccolo-ca.crt"
-    
+
     storage:
       persistent:
         upload-data:

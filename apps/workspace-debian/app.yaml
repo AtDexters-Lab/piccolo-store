@@ -23,6 +23,23 @@ listeners:
     guest_port: 3000
     protocol: http
     flow: tcp
+    auth:
+      rules:
+        - path: "/"
+          type: prefix
+          strategy: protected
+
+resources:
+  priority: normal
+  memory:
+    min_required: 1GB
+    profile: bounded
+
+healthcheck:
+  http:
+    path: /
+    timeout: 10s
+    retries: 3
 
 x-piccolo:
   mode: workspace

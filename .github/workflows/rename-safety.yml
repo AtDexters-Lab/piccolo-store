@@ -1,0 +1,78 @@
+name: Catalog rename safety
+
+# Blocks PRs that rename or remove a service-mode catalog entry without an
+# explicit override. piccolod's catalog sync identifies installed apps by
+# `appInst.CatalogSource` (the `index.yaml` `name:` field). Removing or
+# renaming a service-mode `name:` in index.yaml silently orphans existing
+# installs from the update stream — see CONTRIBUTING.md.
+#
+# The trigger we guard against is the index.yaml name-field change, not
+# the on-disk app.yaml deletion. A name can be renamed in index.yaml while
+# the file stays in place, or the entry can be deleted with the file left
+# behind — either path orphans installs.
+
+on:
+  pull_request:
+    paths:
+      - 'apps/**'
+      - 'index.yaml'
+
+permissions:
+  contents: read
+
+jobs:
+  check-rename:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Install yq
+        uses: ./.github/actions/install-yq
+
+      - name: Detect service-mode catalog entries removed/renamed
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          set -euo pipefail
+          base="origin/${BASE_REF}"
+
+          # Set difference: names in base index.yaml but not in head.
+          # Covers entry deletion, name renames (old gone, new added), and
+          # path-only changes (old name path swapped for new name path).
+          base_names=$(git show "${base}:index.yaml" | yq eval '.apps[].name' - | sort -u)
+          head_names=$(yq eval '.apps[].name' index.yaml | sort -u)
+          removed_names=$(comm -23 <(echo "$base_names") <(echo "$head_names") || true)
+
+          if [ -z "$removed_names" ]; then
+            echo "No catalog entries removed/renamed."
+            exit 0
+          fi
+
+          if [[ "${PR_TITLE}" == *"[ALLOW-RENAME]"* ]]; then
+            echo "PR title contains [ALLOW-RENAME] override; skipping check."
+            echo "Removed/renamed names: ${removed_names}"
+            exit 0
+          fi
+
+          fail=0
+          while IFS= read -r name; do
+            [ -z "$name" ] && continue
+            # Resolve the removed name to its base-branch path.
+            path=$(git show "${base}:index.yaml" | yq eval ".apps[] | select(.name == \"${name}\") | .path" -)
+            if [ -z "$path" ]; then
+              echo "::warning::Could not resolve base-branch path for removed name '${name}'; skipping mode check."
+              continue
+            fi
+            # Read x-piccolo.mode from the base-branch app.yaml. Failures
+            # here halt under set -e rather than silently coercing to "not
+            # service-mode" and letting the rename slip through.
+            mode=$(git show "${base}:${path}" | yq eval '.["x-piccolo"].mode // ""' -)
+            if [ "$mode" = "service" ]; then
+              echo "::error::Service-mode catalog entry '${name}' (mode: service, path: ${path}) removed or renamed in index.yaml. piccolod's catalog sync keys on index.yaml's name: field; this orphans existing installs from the update stream. See CONTRIBUTING.md. To override (e.g., upstream is gone, nobody installed in the field), add [ALLOW-RENAME] to the PR title."
+              fail=1
+            fi
+          done <<< "$removed_names"
+          exit $fail

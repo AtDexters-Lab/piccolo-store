@@ -1,0 +1,19 @@
+type: user
+
+workspace_name: linuxvm
+
+services:
+  main:
+    image: mcr.microsoft.com/devcontainers/base:debian
+    bind_ports: []
+    environment:
+      SHELL: /bin/zsh
+
+resources:
+  priority: normal
+  memory:
+    min_required: 256MB
+    profile: bounded
+
+x-piccolo:
+  mode: workspace

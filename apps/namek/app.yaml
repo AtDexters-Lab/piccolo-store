@@ -118,8 +118,6 @@ permissions:
   filesystem:
     read_only_root: false
 
-# Resource stewardship (app-level). Enforced at per-app-user systemd slice.
-# Namek is a lightweight DNS + control-plane service; bounded profile, modest floor.
 resources:
   priority: normal
   memory:
@@ -149,3 +147,10 @@ app_config:
 
 x-piccolo:
   mode: service
+  replication:
+    cold:
+      datasets: [disk, data]
+      rpo: 1h
+      consistency: crash_consistent
+  secrets:
+    injection: env

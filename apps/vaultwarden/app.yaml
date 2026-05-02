@@ -8,7 +8,7 @@ inputs:
 
 services:
   main:
-    image: docker.io/vaultwarden/server:latest
+    image: docker.io/vaultwarden/server:1.35.8
     bind_ports: [80]
     environment:
       ADMIN_TOKEN: "{{ .Inputs.admin_token }}"
@@ -24,6 +24,32 @@ listeners:
     guest_port: 80
     flow: tcp
     protocol: http
+    auth:
+      rules:
+        - path: "/"
+          type: prefix
+          strategy: protected
+
+resources:
+  priority: normal
+  memory:
+    min_required: 256MB
+    profile: bounded
+
+healthcheck:
+  http:
+    path: /alive
+    timeout: 10s
+    retries: 3
 
 x-piccolo:
   mode: service
+  replication:
+    hot:
+      datasets: [disk, data]
+    cold:
+      datasets: [disk, data]
+      rpo: 1h
+      consistency: crash_consistent
+  secrets:
+    injection: env
