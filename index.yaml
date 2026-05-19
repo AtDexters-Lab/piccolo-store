@@ -49,6 +49,16 @@ apps:
     tags: [converter, files, media, documents]
     source_url: https://github.com/C4illin/ConvertX
 
+  - name: gitea
+    description: A painless self-hosted Git service with code review, issues, and CI integrations
+    icon: https://raw.githubusercontent.com/go-gitea/gitea/main/public/assets/img/logo.svg
+    version: 1.26.1
+    category: Development
+    path: apps/gitea/app.yaml
+    maintainer: Community
+    tags: [git, scm, code, development]
+    source_url: https://github.com/go-gitea/gitea
+
   # System services
 
   - name: namek

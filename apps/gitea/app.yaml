@@ -1,0 +1,184 @@
+inputs:
+  __app_address__:
+    type: string
+    label: "App Address"
+    description: "Subdomain for Gitea (e.g. 'git' → git.<domain>)"
+    default: "git"
+    required: true
+    validation:
+      regex: "^[a-z][a-z0-9]{0,15}$"
+      message: "Only lowercase letters and numbers; must start with a letter; max 16 chars."
+
+  admin_username:
+    type: string
+    label: "Admin Username"
+    description: "Initial site administrator (break-glass account; Piccolo SSO users auto-register on first login)."
+    default: "gitadmin"
+    required: true
+    validation:
+      regex: "^[a-z][a-z0-9_-]{0,30}$"
+      message: "Lowercase letters, numbers, _ and - only; must start with a letter; max 31 chars."
+
+  admin_password:
+    type: password
+    label: "Admin Password"
+    description: "Password for the break-glass administrator account."
+    generate: true
+    required: true
+
+  admin_email:
+    type: string
+    label: "Admin Email"
+    description: "If this matches the Piccolo OIDC user's email, the two accounts auto-link on first SSO login."
+    default: "admin@piccolo.local"
+    required: true
+
+  disable_registration:
+    type: boolean
+    label: "Disable Open Registration"
+    description: "Block self-service signup on the Gitea login page. Piccolo SSO users still auto-register on first OIDC login."
+    default: true
+    required: false
+
+services:
+  main:
+    image: docker.io/gitea/gitea:1.26.1
+    bind_ports: [3000, 2222]
+    oidc_client:
+      redirect_uri_paths:
+        # Gitea OAuth2 callback path is /user/oauth2/{ProviderName}/callback
+        - /user/oauth2/Piccolo/callback
+      ca_mount_path: /etc/ssl/certs/piccolo-internal-ca.crt
+      env:
+        OIDC_ISSUER: "{{ .System.Auth.Issuer }}"
+        OIDC_CLIENT_ID: "{{ .System.Auth.ClientID }}"
+        OIDC_CLIENT_SECRET: "{{ .System.Auth.ClientSecret }}"
+    init_script:
+      file: scripts/init.sh
+      shell: sh
+      env:
+        ADMIN_USER: "{{ .Inputs.admin_username }}"
+        ADMIN_PASSWORD: "{{ .Inputs.admin_password }}"
+        ADMIN_EMAIL: "{{ .Inputs.admin_email }}"
+        OIDC_ISSUER: "{{ .System.Auth.Issuer }}"
+        OIDC_CLIENT_ID: "{{ .System.Auth.ClientID }}"
+        OIDC_CLIENT_SECRET: "{{ .System.Auth.ClientSecret }}"
+      timeout: 120s
+      ready_timeout: 60s
+    environment:
+      USER_UID: "1000"
+      USER_GID: "1000"
+      GITEA__server__DOMAIN: "{{ .Inputs.__app_address__ }}.{{ .System.Domain }}"
+      GITEA__server__ROOT_URL: "https://{{ .Inputs.__app_address__ }}.{{ .System.Domain }}/"
+      GITEA__server__HTTP_PORT: "3000"
+      GITEA__server__SSH_DOMAIN: "{{ .Inputs.__app_address__ }}.{{ .System.Domain }}"
+      GITEA__server__SSH_PORT: "2222"
+      GITEA__server__SSH_LISTEN_PORT: "2222"
+      GITEA__server__START_SSH_SERVER: "true"
+      GITEA__server__BUILTIN_SSH_SERVER_USER: "git"
+      GITEA__server__OFFLINE_MODE: "false"
+      GITEA__database__DB_TYPE: "sqlite3"
+      GITEA__database__PATH: "/data/gitea/gitea.db"
+      GITEA__security__INSTALL_LOCK: "true"
+      GITEA__service__DISABLE_REGISTRATION: "{{ .Inputs.disable_registration }}"
+      GITEA__service__SHOW_REGISTRATION_BUTTON: "false"
+      GITEA__service__ENABLE_BASIC_AUTHENTICATION: "true"
+      # Allow anonymous browsing of public repos. Gitea still enforces per-repo
+      # visibility, so private repos return 404/401 to unauthenticated viewers.
+      GITEA__service__REQUIRE_SIGNIN_VIEW: "false"
+      # OAuth2 client behavior: new Piccolo SSO users get Gitea accounts; existing
+      # accounts auto-link by email.
+      GITEA__oauth2_client__ENABLE_AUTO_REGISTRATION: "true"
+      GITEA__oauth2_client__USERNAME: "preferred_username"
+      GITEA__oauth2_client__ACCOUNT_LINKING: "auto"
+      GITEA__oauth2_client__UPDATE_AVATAR: "true"
+      # Container/OCI registry under /v2/.
+      GITEA__packages__ENABLED: "true"
+      GITEA__openid__ENABLE_OPENID_SIGNIN: "false"
+      GITEA__openid__ENABLE_OPENID_SIGNUP: "false"
+      GITEA__session__PROVIDER: "file"
+      GITEA__log__MODE: "console"
+      GITEA__log__LEVEL: "Info"
+    storage:
+      persistent:
+        data:
+          container: /data
+          size_limit: 20GB
+
+listeners:
+  - name: __primary
+    guest_port: 3000
+    flow: tcp
+    protocol: http
+    auth:
+      # Authorization strategy: Gitea is an auth-aware app, so it owns
+      # repo/package visibility. The proxy lets Gitea see the paths it gates
+      # itself (Git HTTP, OCI registry, REST API) and uses Piccolo SSO for the
+      # interactive web UI.
+      rules:
+        - path: "/.well-known/"
+          type: prefix
+          strategy: public
+
+        # OCI/Docker container registry — Gitea implements the Docker auth
+        # challenge: anonymous pulls of public packages succeed; pushes/private
+        # pulls require bearer tokens. Safe to expose publicly at the proxy.
+        - path: "/v2/"
+          type: prefix
+          strategy: public
+
+        # Git smart-HTTP protocol. Gitea returns 401 for private repos on
+        # unauthenticated requests, so public exposure here is safe.
+        # NOTE: LFS endpoints under /{owner}/{repo}.git/info/lfs/... are NOT
+        # matchable by Go's path.Match across path separators — LFS over HTTPS
+        # therefore requires a Piccolo session. LFS over SSH still works.
+        - path: "/*/*/info/refs"
+          type: pattern
+          strategy: public
+        - path: "/*/*/git-upload-pack"
+          type: pattern
+          strategy: public
+        - path: "/*/*/git-receive-pack"
+          type: pattern
+          strategy: public
+
+        # REST API — Gitea auth-gates each endpoint per resource visibility.
+        - path: "/api/"
+          type: prefix
+          strategy: public
+
+        # Interactive web UI — Piccolo SSO via OIDC. New users auto-register.
+        - path: "/"
+          type: prefix
+          strategy: oidc_passthrough
+
+  # Built-in Gitea SSH server for git push/pull over ssh://git@<host>:2222/...
+  - name: ssh
+    guest_port: 2222
+    flow: tcp
+    protocol: raw
+    port_claim: 2222
+
+resources:
+  priority: normal
+  memory:
+    min_required: 512MB
+    profile: bounded
+
+healthcheck:
+  http:
+    path: /api/healthz
+    timeout: 10s
+    retries: 5
+
+x-piccolo:
+  mode: service
+  replication:
+    hot:
+      datasets: [disk, data]
+    cold:
+      datasets: [disk, data]
+      rpo: 1h
+      consistency: crash_consistent
+  secrets:
+    injection: env
