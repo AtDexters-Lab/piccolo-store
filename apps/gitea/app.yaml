@@ -12,7 +12,7 @@ inputs:
   admin_username:
     type: string
     label: "Admin Username"
-    description: "Initial site administrator (break-glass account; Piccolo SSO users auto-register on first login)."
+    description: "Initial site administrator account."
     default: "gitadmin"
     required: true
     validation:
@@ -22,21 +22,21 @@ inputs:
   admin_password:
     type: password
     label: "Admin Password"
-    description: "Password for the break-glass administrator account."
+    description: "Password for the initial site administrator."
     generate: true
     required: true
 
   admin_email:
     type: string
     label: "Admin Email"
-    description: "If this matches the Piccolo OIDC user's email, the two accounts auto-link on first SSO login."
+    description: "Email for the initial site administrator."
     default: "admin@piccolo.local"
     required: true
 
   disable_registration:
     type: boolean
     label: "Disable Open Registration"
-    description: "Block self-service signup on the Gitea login page. Piccolo SSO users still auto-register on first OIDC login."
+    description: "When true, only the admin can create new user accounts."
     default: true
     required: false
 
@@ -44,15 +44,6 @@ services:
   main:
     image: docker.io/gitea/gitea:1.26.1
     bind_ports: [3000, 2222]
-    oidc_client:
-      redirect_uri_paths:
-        # Gitea OAuth2 callback path is /user/oauth2/{ProviderName}/callback
-        - /user/oauth2/Piccolo/callback
-      ca_mount_path: /etc/ssl/certs/piccolo-internal-ca.crt
-      env:
-        OIDC_ISSUER: "{{ .System.Auth.Issuer }}"
-        OIDC_CLIENT_ID: "{{ .System.Auth.ClientID }}"
-        OIDC_CLIENT_SECRET: "{{ .System.Auth.ClientSecret }}"
     init_script:
       file: scripts/init.sh
       shell: sh
@@ -60,9 +51,6 @@ services:
         ADMIN_USER: "{{ .Inputs.admin_username }}"
         ADMIN_PASSWORD: "{{ .Inputs.admin_password }}"
         ADMIN_EMAIL: "{{ .Inputs.admin_email }}"
-        OIDC_ISSUER: "{{ .System.Auth.Issuer }}"
-        OIDC_CLIENT_ID: "{{ .System.Auth.ClientID }}"
-        OIDC_CLIENT_SECRET: "{{ .System.Auth.ClientSecret }}"
       timeout: 120s
       ready_timeout: 60s
     environment:
@@ -86,12 +74,6 @@ services:
       # Allow anonymous browsing of public repos. Gitea still enforces per-repo
       # visibility, so private repos return 404/401 to unauthenticated viewers.
       GITEA__service__REQUIRE_SIGNIN_VIEW: "false"
-      # OAuth2 client behavior: new Piccolo SSO users get Gitea accounts; existing
-      # accounts auto-link by email.
-      GITEA__oauth2_client__ENABLE_AUTO_REGISTRATION: "true"
-      GITEA__oauth2_client__USERNAME: "preferred_username"
-      GITEA__oauth2_client__ACCOUNT_LINKING: "auto"
-      GITEA__oauth2_client__UPDATE_AVATAR: "true"
       # Container/OCI registry under /v2/.
       GITEA__packages__ENABLED: "true"
       GITEA__openid__ENABLE_OPENID_SIGNIN: "false"
@@ -111,10 +93,15 @@ listeners:
     flow: tcp
     protocol: http
     auth:
-      # Authorization strategy: Gitea is an auth-aware app, so it owns
-      # repo/package visibility. The proxy lets Gitea see the paths it gates
-      # itself (Git HTTP, OCI registry, REST API) and uses Piccolo SSO for the
-      # interactive web UI.
+      # Gitea owns repo/package visibility, so the proxy exposes the paths it
+      # auth-gates itself (Git HTTP, OCI registry, REST API). The interactive
+      # web UI sits behind the Piccolo session.
+      #
+      # OIDC SSO is intentionally not wired here: Gitea's OIDC client does not
+      # currently support PKCE (see gitea#16983, #21376, #34747), and the
+      # Piccolo OIDC issuer requires `code_challenge` on the authorization
+      # endpoint. Re-add `oidc_client` and switch the '/' rule to
+      # `oidc_passthrough` once either side closes that gap.
       rules:
         - path: "/.well-known/"
           type: prefix
@@ -122,7 +109,7 @@ listeners:
 
         # OCI/Docker container registry — Gitea implements the Docker auth
         # challenge: anonymous pulls of public packages succeed; pushes/private
-        # pulls require bearer tokens. Safe to expose publicly at the proxy.
+        # pulls require bearer tokens.
         - path: "/v2/"
           type: prefix
           strategy: public
@@ -147,10 +134,11 @@ listeners:
           type: prefix
           strategy: public
 
-        # Interactive web UI — Piccolo SSO via OIDC. New users auto-register.
+        # Interactive web UI — Piccolo session required; users then sign in
+        # to Gitea with their local Gitea credentials.
         - path: "/"
           type: prefix
-          strategy: oidc_passthrough
+          strategy: protected
 
   # Built-in Gitea SSH server for git push/pull over ssh://git@<host>:2222/...
   - name: ssh
