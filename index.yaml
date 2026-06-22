@@ -29,6 +29,16 @@ apps:
     tags: [password-manager, security, vault]
     source_url: https://github.com/dani-garcia/vaultwarden
 
+  - name: pi-hole
+    description: Network-wide ad blocking and DNS sinkhole
+    icon: https://wp-cdn.pi-hole.net/wp-content/uploads/2016/12/Vortex-R.png
+    version: 2026.06.0
+    category: Security
+    path: apps/pi-hole/app.yaml
+    maintainer: Pi-hole
+    tags: [dns, ad-blocking, privacy, network]
+    source_url: https://github.com/pi-hole/docker-pi-hole
+
   - name: immich
     description: High performance self-hosted photo and video management solution
     icon: https://raw.githubusercontent.com/immich-app/immich/main/docs/static/img/favicon.png

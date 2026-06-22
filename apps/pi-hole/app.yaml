@@ -1,0 +1,123 @@
+inputs:
+  __app_address__:
+    type: string
+    label: "App Address"
+    description: "Subdomain for Pi-hole (e.g. 'pihole' -> pihole.<domain>)"
+    default: "pihole"
+    required: true
+    validation:
+      regex: "^[a-z][a-z0-9]{0,15}$"
+      message: "Only lowercase letters and numbers; must start with a letter; max 16 chars."
+
+  timezone:
+    type: string
+    label: "Timezone"
+    description: "IANA timezone for log rotation and scheduled list updates."
+    default: "UTC"
+    required: true
+    validation:
+      regex: "^[A-Za-z_]+(/[A-Za-z0-9_+.-]+)*$"
+      message: "Use an IANA timezone such as UTC, Europe/London, or America/New_York."
+
+services:
+  main:
+    image: docker.io/pihole/pihole:2026.06.0
+    bind_ports: [53, 80, 443]
+    environment:
+      TZ: "{{ .Inputs.timezone }}"
+      # Piccolo listener auth is the web UI gate; keep Pi-hole's own web
+      # password disabled so users do not have to sign in twice.
+      FTLCONF_webserver_api_password: ""
+      FTLCONF_dns_listeningMode: "ALL"
+    storage:
+      persistent:
+        config:
+          container: /etc/pihole
+          size_limit: 2GB
+
+listeners:
+  - name: __primary
+    guest_port: 80
+    flow: tcp
+    protocol: http
+    auth:
+      rules:
+        - path: "/"
+          type: prefix
+          strategy: protected
+
+  - name: dns
+    guest_port: 53
+    flow: udp
+    protocol: raw
+    port_claim: 53
+    connection_auth:
+      default: deny
+      rules:
+        - match: 10.0.0.0/8
+          strategy: allow
+        - match: 172.16.0.0/12
+          strategy: allow
+        - match: 192.168.0.0/16
+          strategy: allow
+        - match: 100.64.0.0/10
+          strategy: allow
+        - match: 169.254.0.0/16
+          strategy: allow
+        - match: fc00::/7
+          strategy: allow
+        - match: fe80::/10
+          strategy: allow
+
+  - name: dnstcp
+    guest_port: 53
+    flow: tcp
+    protocol: raw
+    port_claim: 53
+    connection_auth:
+      default: deny
+      rules:
+        - match: 10.0.0.0/8
+          strategy: allow
+        - match: 172.16.0.0/12
+          strategy: allow
+        - match: 192.168.0.0/16
+          strategy: allow
+        - match: 100.64.0.0/10
+          strategy: allow
+        - match: 169.254.0.0/16
+          strategy: allow
+        - match: fc00::/7
+          strategy: allow
+        - match: fe80::/10
+          strategy: allow
+
+resources:
+  priority: normal
+  memory:
+    min_required: 512MB
+    profile: bounded
+
+healthcheck:
+  http:
+    path: /admin/
+    timeout: 10s
+    retries: 5
+
+permissions:
+  network:
+    internet: allow
+    local_network: allow
+    dns: allow
+  filesystem:
+    read_only_root: false
+
+x-piccolo:
+  mode: service
+  replication:
+    hot:
+      datasets: [disk, data]
+    cold:
+      datasets: [disk, data]
+      rpo: 1h
+      consistency: crash_consistent

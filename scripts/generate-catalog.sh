@@ -28,6 +28,7 @@ declare -A DISPLAY_NAME_OVERRIDES=(
   [convertx]="ConvertX"
   [wordpress]="WordPress"
   [immich]="Immich"
+  [pi-hole]="Pi-hole"
 )
 
 to_title_case() {
