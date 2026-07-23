@@ -71,6 +71,19 @@ apps:
 
   # System services
 
+  - name: piccolo-ai
+    description: OpenAI-compatible local inference provider optimized for Intel hardware
+    version: 0.1.1
+    architectures: [amd64]
+    category: System
+    path: apps/piccolo-ai/app.yaml
+    maintainer: Piccolo
+    tags: [ai, inference, openvino, intel, system]
+    source_url: https://github.com/AtDexters-Lab/piccolo-ai
+    required_features:
+      - capability_bindings_v1
+      - artifact_bindings_v1
+
   - name: namek
     description: Piccolo OS control plane — device auth, DNS, and token issuance
     version: latest

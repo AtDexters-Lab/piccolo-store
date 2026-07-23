@@ -29,6 +29,7 @@ declare -A DISPLAY_NAME_OVERRIDES=(
   [wordpress]="WordPress"
   [immich]="Immich"
   [pi-hole]="Pi-hole"
+  [piccolo-ai]="Piccolo AI"
 )
 
 to_title_case() {
@@ -356,12 +357,12 @@ ${CATEGORY_CARDS[$cat]}      </div>
 SECTIONEOF
 done
 
-# --- Write "Self-host the full stack" section for System apps ---
+# --- Write System apps section ---
 if [[ -n "${CATEGORY_CARDS[System]+x}" ]]; then
   cat >> "$DOCS_DIR/index.html" << 'STACKEOF'
     <section class="category-section stack-section">
-      <h2>Self-host the full stack</h2>
-      <p class="stack-desc">Piccolo OS is open source top to bottom — including the orchestrator. Install Namek on a second device and run your own control plane. No account required, no managed service dependency.</p>
+      <h2>System services</h2>
+      <p class="stack-desc">Self-host Piccolo's supporting services — from the control plane to local AI inference — on hardware you control. No managed service dependency.</p>
       <div class="grid">
 STACKEOF
   cat >> "$DOCS_DIR/index.html" << SECTIONEOF
