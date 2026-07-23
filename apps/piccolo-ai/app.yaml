@@ -43,7 +43,7 @@ primary_service: inference
 
 services:
   inference:
-    image: ghcr.io/atdexters-lab/piccolo-ai-ovms:0.1.1@sha256:2de8591d77955c043833f8bf89d160f8731613cae365a08924af4cb4a556cd11
+    image: ghcr.io/atdexters-lab/piccolo-ai-ovms:0.1.2@sha256:e126df777cb7caa2975edb87f7658e8ea932875b9f510ce628788f15d5bd0453
     bind_ports: [8000, 8001]
     environment:
       PICCOLO_AI_API_TOKEN: "{{ .Inputs.api_token }}"

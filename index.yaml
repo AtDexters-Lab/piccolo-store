@@ -73,7 +73,7 @@ apps:
 
   - name: piccolo-ai
     description: OpenAI-compatible local inference provider optimized for Intel hardware
-    version: 0.1.1
+    version: 0.1.2
     architectures: [amd64]
     category: System
     path: apps/piccolo-ai/app.yaml
