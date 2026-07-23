@@ -1,0 +1,119 @@
+type: system
+
+inputs:
+  __app_address__:
+    type: string
+    label: "App Address"
+    description: "Subdomain for the Piccolo AI API (e.g. 'ai' -> ai.<domain>)"
+    default: "ai"
+    required: true
+    validation:
+      regex: "^[a-z][a-z0-9]{0,15}$"
+      message: "Only lowercase letters and numbers; must start with a letter; max 16 chars."
+
+  api_token:
+    type: password
+    label: "API Access Token — Save Before Installing"
+    description: "Generated bearer token for the public /v3 API. Reveal and copy it before installing; Piccolo cannot show the current value afterward."
+    generate: true
+    required: true
+    validation:
+      regex: "^[A-Za-z0-9_-]{24,128}$"
+      message: "Use 24-128 URL-safe letters, numbers, hyphens, or underscores."
+
+  target_device:
+    type: string
+    label: "Inference Device"
+    description: "OpenVINO target such as CPU, GPU, NPU, or AUTO:GPU,CPU."
+    default: "AUTO:GPU,CPU"
+    required: true
+    validation:
+      regex: "^[A-Za-z][A-Za-z0-9_.:-]*(,[A-Za-z0-9_.:-]+)*$"
+      message: "Use an OpenVINO device expression such as CPU, GPU, NPU, or AUTO:GPU,CPU."
+
+artifacts:
+  model:
+    source:
+      type: huggingface
+      repository: OpenVINO/Qwen3-0.6B-int4-ov
+      revision: f864c6106efb6c7f7b4ef274a78a98e37210dddd
+      path: .
+
+primary_service: inference
+
+services:
+  inference:
+    image: ghcr.io/atdexters-lab/piccolo-ai-ovms:0.1.1@sha256:2de8591d77955c043833f8bf89d160f8731613cae365a08924af4cb4a556cd11
+    bind_ports: [8000, 8001]
+    environment:
+      PICCOLO_AI_API_TOKEN: "{{ .Inputs.api_token }}"
+      PICCOLO_AI_TARGET_DEVICE: "{{ .Inputs.target_device }}"
+    storage:
+      artifacts:
+        model:
+          container: /models/model
+
+listeners:
+  - name: __primary
+    guest_port: 8000
+    flow: tcp
+    protocol: http
+    remote_ports: [80, 443]
+    auth:
+      rules:
+        - path: "/v3"
+          type: exact
+          strategy: public
+        - path: "/v3/"
+          type: prefix
+          strategy: public
+        - path: "/"
+          type: prefix
+          strategy: protected
+
+  - name: inference
+    guest_port: 8001
+    flow: tcp
+    protocol: http
+    remote_ports: [80, 443]
+    provides:
+      - capability: ai.inference.openai.v1
+        base_path: /v3
+    auth:
+      rules:
+        - path: "/"
+          type: prefix
+          strategy: protected
+
+resources:
+  priority: normal
+  memory:
+    min_required: 2GB
+    profile: elastic
+
+healthcheck:
+  http:
+    path: /healthz
+    timeout: 10s
+    retries: 10
+
+permissions:
+  network:
+    internet: allow
+    local_network: deny
+    dns: deny
+  resources:
+    max_processes: 512
+    max_open_files: 65536
+    privileged: false
+  filesystem:
+    read_only_root: true
+    device_access: deny
+
+x-piccolo:
+  mode: service
+  requires_features:
+    - capability_bindings_v1
+    - artifact_bindings_v1
+  secrets:
+    injection: env
