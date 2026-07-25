@@ -24,12 +24,12 @@ inputs:
   target_device:
     type: string
     label: "Inference Device"
-    description: "OpenVINO target such as CPU, GPU, NPU, or AUTO:GPU,CPU."
-    default: "AUTO:GPU,CPU"
+    description: "OVMS inference target. Use GPU for Intel acceleration or CPU as a compatibility fallback."
+    default: "GPU"
     required: true
     validation:
-      regex: "^[A-Za-z][A-Za-z0-9_.:-]*(,[A-Za-z0-9_.:-]+)*$"
-      message: "Use an OpenVINO device expression such as CPU, GPU, NPU, or AUTO:GPU,CPU."
+      regex: "^(CPU|GPU)$"
+      message: "Use CPU or GPU."
 
 artifacts:
   model:
