@@ -24,7 +24,7 @@ inputs:
   target_device:
     type: string
     label: "Inference Device"
-    description: "OVMS inference target. Use GPU for Intel acceleration or CPU as a compatibility fallback."
+    description: "OVMS inference target. GPU is recommended for Intel acceleration; CPU remains available as a compatibility fallback."
     default: "GPU"
     required: true
     validation:
@@ -35,8 +35,8 @@ artifacts:
   model:
     source:
       type: huggingface
-      repository: OpenVINO/Qwen3-0.6B-int4-ov
-      revision: f864c6106efb6c7f7b4ef274a78a98e37210dddd
+      repository: boris93/Qwen3-VL-4B-Instruct-int4-ov
+      revision: d9bd0bcbadde6f1fd634e5e4734e0098e9a2a317
       path: .
 
 primary_service: inference
@@ -88,7 +88,7 @@ listeners:
 resources:
   priority: normal
   memory:
-    min_required: 2GB
+    min_required: 12GB
     profile: elastic
 
 healthcheck:
